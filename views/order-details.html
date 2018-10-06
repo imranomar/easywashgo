@@ -1,0 +1,111 @@
+<style>
+	html {
+        background-image: none !important;
+	}
+
+	.mybutton2
+	{
+		height: 25vw;
+	}
+
+</style>
+<div ng-controller="OrderdetailsCtrl" >
+
+
+
+
+<!-- wizard one start -->
+
+<div class="container">
+    <div class="row page-title-row">
+        <div class="col s6 page-title-row-col">
+            <div class='left-align'>
+                
+                <h5>Order Details</h5>
+                Order Id - {{order.id}}
+            </div>
+        </div>
+        <div class="col s6 page-title-row-col">
+                <div class='right-align'>
+                    
+                    <h4>5552</h4>
+                    <h5>234</h5>
+                </div>
+            </div>
+    </div>
+    <div class=' row my_button z-depth-4' style='    
+    border-radius: 10px;
+    padding: 10px;'>
+        <div class="col s12" style='padding: 5px'>
+            <h4 style='margin-bottom: 10px;'>{{order.customer.full_name}}</h4>
+            <h4>{{order.customer.phone}}</h4>
+        </div>
+        
+    </div>
+    <div class=' row my_button z-depth-4' style='    
+    border-radius: 10px;
+    padding: 10px;'>
+        <div class="col s12" style='padding: 5px'>
+           
+            <h5 style='margin-bottom: 10px;'>Pick Up Time: {{order.pickup_time_from}} - {{order.pickup_time_to}}</h5>
+            <!-- <h5 style='margin-bottom: 10px;'>Pick at Door: {{order.pickup_at_door}}</h5>
+            <h5 style='margin-bottom: 10px;'>Drop Date: {{order.drop_date}}</h5>
+            <h5 style='margin-bottom: 10px;'>Drop Time: {{order.drop_time_from}} - {{order.drop_time_to}}</h5>
+            <h5 style='margin-bottom: 10px;'>Drop at Door: {{order.drop_at_door}}</h5> -->
+        </div>
+    </div>
+
+    <div class=' row my_button z-depth-4' style='    
+    border-radius: 10px;
+    padding: 10px;'>
+        <div class="col s12" style='padding: 5px'>
+            <h5 style='margin-bottom: 10px;'>{{order.address.street_name}}</h5>
+            <h5 style='margin-bottom: 10px;'>Floor: {{order.address.floor}} , Unit: {{order.address.unit_number}}</h5>
+
+            <h5 style='margin-bottom: 10px;'>P.O.Box: {{order.address.pobox}}</h5>
+        </div>
+    </div>
+
+    <div class=' row my_button z-depth-4' style='    
+    border-radius: 10px;
+    padding: 10px;'>
+        <div class="col s12" style='padding: 5px'>
+            <h5> Comments</h5>
+            {{order.comments}}
+        </div>
+    </div>
+
+    <!-- Modal Structure -->
+    <div id="modal1" class="modal  modal-fixed-footer" >
+    <div class="modal-content">
+        <h4>Enter Laundry Details</h4>
+
+        <div class="row" ng-repeat="laundry in laundrypricing">
+            <div class="col s8">{{laundry.title}}</div>
+            <div class="col s4"><input type="text" id='' value='0'></div>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+            <a href="" class="modal-close waves-effect waves-green btn-flat">Ok</a>
+        <a href="" class="modal-close waves-effect waves-green btn-flat">Cancel</a>
+    </div>
+    </div>
+
+
+ <!-- Modal Trigger -->
+ <button data-target="modal1" class="btn modal-trigger">Modal</button>
+
+
+         <br><br><br><br>
+ 
+    <section  style='position: fixed;z-index:100; bottom: 0px; left:0px; background-color:#0c3f5a; color:white; width: 100%'>
+      <div class="row" style='padding-top:10px'>
+          <div class="col s3 center-align"> <i class="material-icons">map</i></div>
+          <div class="col s3 center-align"><i class="material-icons">call</i></div>
+          <div class="col s3 center-align"><i class="material-icons">library_books</i></div>
+          <div class="col s3 center-align"><i class="material-icons">assignment_turned_in</i></div>
+      </div>
+    </section>
+</div>
+</div>

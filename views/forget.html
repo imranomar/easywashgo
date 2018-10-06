@@ -1,0 +1,67 @@
+<div ng-controller="ForgetCtrl" class="forgetpage">
+
+	<div class="row row1">
+		<div class="col loginpage">
+	      <img src="assets/signinlogo.png" height="250px" class="imgclass">
+	     </div>
+	</div>
+
+	<div class="row">
+		<div class="col forgetdescription1">
+	      	<h6 class="fontstyle"> Forget Password </h6>
+	     </div>
+	</div>
+	<!-- 	      Your username and password will be emailed to you. -->
+	<div class="row">
+		<div class="col forgetdescription">
+			We just need your registered Email Id to send you password forget instructions.
+	     </div>
+	</div>
+
+	<div class="row">
+
+		<div class="col logintran">
+
+	      	<div class="list">	  
+
+	      	   <form ng-submit="sendemail()">
+
+				  <label class="item item-input item-floating-label forgetinput">
+
+				    <span class="input-label">Enter your email address. </span>
+
+				    <input type="email" class="forgetinputborder" placeholder="Enter Your Email Address" ng-model="forgetdata1.email" autofocus="">
+
+					<!-- <input type="submit" value="Send" class="button button-full button-balanced"> -->
+
+				  </label>
+
+				  <label class="item item-input forgetinput1">
+					<input type="submit" value="Send" class="button button-full button-balanced" style="border-radius: 22px;">
+				  </label>
+
+
+				</form>
+
+			</div>
+
+	    </div>	
+
+	</div>
+
+	<div class="row" style="height: 36px;">
+		<div class="col"> </div>
+	</div>
+
+	<div class="row">
+
+		<div class="col forgetbtn">
+			<a href="login">
+				<< Back to LaundryApp <span class="loginttt"> Login Page </span>
+			</a>
+
+	    </div>	
+
+	</div>
+
+</div>

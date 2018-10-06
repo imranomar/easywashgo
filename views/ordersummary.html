@@ -1,0 +1,918 @@
+<style>
+	html {
+        background-image: none !important;
+	}
+
+	.mybutton2
+	{
+		height: 25vw;
+	}
+
+</style>
+<div ng-controller="OrdersummaryCtrl" class="myorder Deliverydate finaldate">
+
+	<!-- The Modal -->
+	<div class="modal cancel-order-modal">
+
+			<!-- Modal content -->
+			<div class="modal-content">
+			<div class="modal-header">
+				<span class="close">&times;</span>
+				<h3>Alert !!</h3>
+			</div>
+			<div class="modal-body">
+				<p>Are you sure you want to cancel</p>
+			</div>
+			<div class="modal-footer">
+				<div class="row">
+					<div class="col border-0">
+							<button class=" wizard-btn cancel-order-btn">
+									Yes
+							</button>
+							<button class="wizard-btn close-modal ">
+									No
+							</button>
+					</div> 
+				</div>
+			</div>
+		</div> 
+	</div>
+	<!-- MODEL ENDS HERE -->
+
+
+	
+	
+	<div class="ion-content mainmyorder">
+
+		<!-- <div class="bar bar-header bar-balanced">
+
+		<a href="#/dashboard"> 
+		  	<button class="button button-icon icon ion-android-arrow-back" ng-click="onCancelOrder()"></button>
+		</a> 
+
+		</div> -->
+
+		<div class="row topmargin"> </div>
+
+		<div class="">
+			
+			<form>
+
+				<!-- wizard one start -->
+				 <section class="tab1">
+					<div class="container">
+						<div class="row page-title-row">
+							<div class="col s10 page-title-row-col">
+								<div class='left-align'>
+									<h4>Select Pickup Date</h4>
+								</div>
+							</div>
+							<div class="col s2 page-title-row-col" >
+								<div class='right-align'>
+										<div class="div_close_icon right-align" ng-click="onCancelOrder()">
+												<span class="material-icons">close</span>
+											</div>
+								</div>
+							</div>
+						</div>
+						<div 
+							class="row"
+							ng-repeat="value in datelist" 
+							ng-hide="!showAllDateList && $index > 4" 
+							ng-click="savelocallyDate(value)"
+							ng-class="{
+								'today-div': value.name == 'Today',
+								'tomorrow-div': value.name == 'Tomorrow',
+							}">
+							<div class="col s12">
+								<div class="mybutton next row z-depth-4" >
+									<div class="col s6 my_button_column"  >
+										<div class="row">
+											<div class="col s12 my_button_title" ><h5>{{value.name}}</h5></div>
+										</div>
+										<div class="row">
+											<div class="col s12 my_button_sub_title" >{{value.shortDate}} </div>
+										</div>
+									</div>
+									<div class="col s4 valign-wrapper my_button_column" >
+										<span class="iconsstyle" ng-if="value.price"> 
+											<span  class="my_close_button"><i class="tiny material-icons my_close_button_icon"> attach_money </i> {{value.price}}</span>
+										</span>
+									</div>
+									<div class="col s2 valign-wrapper my_button_column" >
+										<span  class="large material-icons  base_color">chevron_right</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+						<div 
+							class="row"
+							>
+							<div  ng-click="onOther()"  class="col s12">
+								<div class="mybutton row z-depth-4" >
+									<div class="col s6 my_button_column"  >
+										<div class="row">
+											<div class="col s12 my_button_title" ><h5>Other</h5></div>
+										</div>
+										<div class="row">
+											<div class="col s12 my_button_sub_title" >{{value.shortDate}} </div>
+										</div>
+									</div>
+									<div class="col s4 valign-wrapper my_button_column" >
+										<span class="iconsstyle" ng-if="value.price"> 
+											<span  class="my_close_button"><i class="tiny material-icons my_close_button_icon"> attach_money </i> {{value.price}}</span>
+										</span>
+									</div>
+									<div class="col s2 valign-wrapper my_button_column" >
+										<span  class="large material-icons  base_color">chevron_right</span>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						
+					</div>
+				 </section>
+
+				 <!-- wizard one closed -->
+
+				  <!-- wizard two open -->
+				 
+				 <section class="tab2">
+
+					<!-- The Modal -->
+					<div class="modal">
+
+							<!-- Modal content -->
+							<div class="modal-content">
+							<div class="modal-header">
+								<span class="close">&times;</span>
+								<h3>Alert !!</h3>
+							</div>
+							<div class="modal-body">
+								<p>Are you sure you want to go back</p>
+							</div>
+							<div class="modal-footer">
+								<div class="row">
+									<div class="col border-0">
+											<button class="wizard-btn prev-modal" >
+													Previous
+											</button>
+											<button class="wizard-btn close-modal ">
+													close
+											</button>
+									</div> 
+								</div>
+							</div>
+						</div> 
+					</div>
+
+					
+					
+	
+
+
+					
+						<!-- <div class="list">
+								  <div class="list">
+										<div class="item">
+											<label class="container" for="a">I'will leave at the door.
+											  <input type="checkbox" id='a' class="checky" name="pickAtDoor">
+											  <span class="checkmark"></span>
+											</label>
+										</div>
+									</div>
+							
+									<div class="row finaldate1">
+										
+										<div class="col finaldate1col">
+							
+											<div class="list finaldate-list">
+												
+												<div class="item item-thumbnail-left"  ng-repeat="value in Timeslot">
+													<img src="assets\clock (1).png">
+													<h2 ng-if="value.type == 1">FLEXIBLE </h2>
+													<h2 ng-if="value.type == 2"> ONE HOUR SLOT </h2>
+													<h4> BETWEEN </h4>
+													<p> {{value.time_from}}:00 to  {{value.time_to}}:00 </p>
+													 <button class="button button-clear button-positive"> Free </button> -->
+													<!-- <label class="container" for="{{value}}">{{value.price}} -->
+															<!-- <input type="radio" id='{{value}}' value="{{value}}" class="checky" name="pickUpRadio"> -->
+															<!-- <span class="checkmark unikk" ></span> -->
+															<!-- ng-click="savelocallyTime(value)" -->
+													<!-- </label>
+												</div>
+
+											</div> 
+							
+										</div>
+							
+									</div> 
+								
+																  
+						 </div> -->
+						 <div class="container">
+								<div class="row page-title-row">
+									<div class="col s10 page-title-row-col">
+										<div class='left-align'>
+											<h4>Select Pickup Time</h4>
+										</div>
+									</div>
+									<div class="col s2 page-title-row-col" >
+										<div class='right-align'>
+												<div class="div_close_icon right-align" ng-click="onCancelOrder()">
+														<span class="material-icons">close</span>
+												</div>
+										</div>
+									</div>
+								</div>
+								<div id='div_slots'>
+								<div 
+								class="row"
+								ng-repeat="value in Timeslot" 
+								>
+									<div class="col s12">
+											<label class="container" for="{{value}}">
+										<div class="mybutton2 row z-depth-4" ng-class="value.price > 0 ? 'paid' : 'unpaid'">
+											<div class="col s3 my_button_column" style='padding-right:0px'  >
+												<div class="row">
+													<div class="col s12 my_button_title" ><img width="100%" src="images\{{value.time_from}}.png"></div>
+												</div>
+											</div>
+											<div class="col s6 valign-wrapper my_button_column" style='padding-right:0px' >
+												<div class="row">
+													<div class="col s12 my_button_title" >
+														<!-- we do not have one hour slot option now -->
+														<!-- <span ng-if="value.type == 1">FLEXIBLE </span>
+														<span ng-if="value.type == 2"> ONE HOUR SLOT </span> -->
+														<h6> BETWEEN </h6>
+														<h5> {{value.time_from}}:00 to  {{value.time_to}}:00 </h5>
+													</div>
+												</div>
+											</div>
+											<div class="col s3 valign-wrapper my_button_column"  style='padding-right:0px'>
+												<span class="iconsstyle"> 
+													<span  class="my_close_button"><i class="tiny material-icons my_close_button_icon"> attach_money </i> {{value.price}}</span>
+												</span>
+												
+															<input type="radio" id='{{value}}' value="{{value}}" class="checky" name="pickUpRadio">
+															<span class="checkmark unikk" ></span>
+															<!-- ng-click="savelocallyTime(value)" -->
+												
+											</div>
+										</div></label>
+									</div>
+								</div>
+								</div>
+								<div class="row"><div style='margin-top: 5vw; margin-bottom: 5vw' class="col s12 center-align">OR</div></div>
+								<div class='mybutton row  z-depth-4  valign-wrapper '>
+									
+										<div class="col s9">
+											<div class="item ">
+												<label class="container" for="a">I'will leave at the door.
+													<input type="checkbox" id='a' class="checky" name="pickAtDoor">
+													<span class="checkmark"></span>
+												</label>
+											</div>
+										</div>
+										<div class="col s3 valign-wrapper my_button_column"  style='padding-right:0px'>
+											<span class="iconsstyle"> 
+												<span  class="">Free</span>
+											</span>
+											
+
+											
+										</div>
+									
+								</div>
+								<div class="row"  style='margin-top: 8vw'>
+									<div class="col s6">
+										<button class="wizard-btn next" >
+											Next
+										</button>
+									</div>
+									<div class="col s6">
+										<button class=" wizard-btn prev-2-btn" id="prev" >
+											Previous
+									</button>
+									</div>
+								</div>
+								
+								
+							</div> <!-- container ends here -->
+							
+				 </section>
+
+				 <!-- wizard two closed -->
+
+				 <!-- wizard three open -->
+				 
+				 <section class="tab3">
+
+					<!-- The Modal -->
+					<div class="modal">
+
+							<!-- Modal content -->
+							<div class="modal-content">
+							<div class="modal-header">
+								<span class="close">&times;</span>
+								<h3>Alert !!</h3>
+							</div>
+							<div class="modal-body">
+								<p>Are you sure you want to go back</p>
+							</div>
+							<div class="modal-footer">
+								<div class="row">
+									<div class="col border-0">
+											<button class=" wizard-btn prev-modal">
+													Previous
+											</button>
+											<button class="wizard-btn close-modal ">
+													close
+											</button>
+									</div> 
+								</div>
+							</div>
+						</div> 
+					</div>
+					<div class="container">
+						<div class="row page-title-row">
+							<div class="col s10 page-title-row-col">
+								<div class='left-align'>
+									<h4>Select Drop Date</h4>
+								</div>
+							</div>
+							<div class="col s2 page-title-row-col" >
+								<div class='right-align'>
+										<div class="div_close_icon right-align" ng-click="onCancelOrder()">
+												<span class="material-icons">close</span>
+										</div>
+								</div>
+							</div>
+						</div>
+
+						<div 
+									class="row marginrow"  
+									ng-repeat="value in datelist1"  
+									ng-hide="!showAllDateList1 && $index > 4" 
+									ng-click="savelocallyDeliveryDate(value)"
+									ng-class="{
+										'tomorrow-div': value.name == 'Tomorrow',
+										'day-after-div': value.name == 'day after',
+									}">
+							<div class="col s12">
+								<div class="mybutton next row z-depth-4"  ng-class="value.price > 0 ? 'paid' : 'unpaid'" >
+									<div class="col s6 my_button_column"  >
+										<div class="row">
+											<div class="col s12 my_button_title" ><h5>{{value.name}}</h5></div>
+										</div>
+										<div class="row">
+											<div class="col s12 my_button_sub_title" >{{value.shortDate}} </div>
+										</div>
+									</div>
+									<div class="col s4 valign-wrapper my_button_column" >
+										<span class="iconsstyle" ng-if="value.price"> 
+											<span  class="my_close_button"><i class="tiny material-icons my_close_button_icon"> attach_money </i> {{value.price}}</span>
+										</span>
+									</div>
+									<div class="col s2 valign-wrapper my_button_column" >
+										<span  class="large material-icons  base_color">chevron_right</span>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div 
+						class="row" ng-if="!showAllDateList1"
+						>
+							<div  ng-click="onOther1()"  class="col s12 next">
+								<div class="mybutton row z-depth-4" >
+									<div class="col s6 my_button_column"  >
+										<div class="row">
+											<div class="col s12 my_button_title" ><h5>Other</h5></div>
+										</div>
+										<div class="row">
+											<div class="col s12 my_button_sub_title" >{{value.shortDate}} </div>
+										</div>
+									</div>
+									<div class="col s4 valign-wrapper my_button_column" >
+										<span class="iconsstyle" ng-if="value.price"> 
+											<span  class="my_close_button"><i class="tiny material-icons my_close_button_icon"> attach_money </i> {{value.price}}</span>
+										</span>
+									</div>
+									<div class="col s2 valign-wrapper my_button_column" >
+										<span  class="large material-icons  base_color">chevron_right</span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<button class=" wizard-btn prev-2-btn" id="prev">
+								Previous
+						</button>
+					</div> <!-- container ends here -->
+
+
+					
+					
+						
+								
+							
+									
+							
+									<!-- <div class="row " ng-if="!showAllDateList1">
+										<div class="col next" ng-click="onOther1()">
+											<div class="h2 title tt1"> OTHER </div>
+										</div>
+									</div> -->
+							
+									
+									
+															
+						
+				 </section>
+
+				 <!-- wizard three closed -->
+
+				  <!-- wizard four open -->
+				 
+				 <section class="tab4">
+
+					<!-- The Modal -->
+					<div class="modal">
+
+							<!-- Modal content -->
+							<div class="modal-content">
+							<div class="modal-header">
+								<span class="close">&times;</span>
+								<h3>Alert !!</h3>
+							</div>
+							<div class="modal-body">
+								<p>Are you sure you want to go back</p>
+							</div>
+							<div class="modal-footer">
+								<div class="row">
+									<div class="col border-0">
+											<button class=" wizard-btn prev-modal">
+													Previous
+											</button>
+											<button class="wizard-btn close-modal ">
+													close
+											</button>
+									</div> 
+								</div>
+							</div>
+						</div> 
+					</div>
+					<div class="container">
+						<div class="row page-title-row">
+							<div class="col s10 page-title-row-col">
+								<div class='left-align'>
+									<h4>Select Drop Time</h4>
+								</div>
+							</div>
+							<div class="col s2 page-title-row-col" >
+								<div class='right-align'>
+										<div class="div_close_icon right-align" ng-click="onCancelOrder()">
+												<span class="material-icons">close</span>
+										</div>
+								</div>
+							</div>
+						</div>
+						<div id='div_slots'>
+								<div 
+								class="row"
+								ng-repeat="value in Timeslot1" 
+								>
+									<div class="col s12">
+											<label class="container" for="a{{value}}">
+										<div class="mybutton2 row z-depth-4"  ng-class="value.price > 0 ? 'paid' : 'unpaid'" >
+											<div class="col s3 my_button_column" style='padding-right:0px'  >
+												<div class="row">
+													<div class="col s12 my_button_title" ><img width="100%" src="images\{{value.time_from}}.png"></div>
+												</div>
+											</div>
+											<div class="col s6 valign-wrapper my_button_column" style='padding-right:0px' >
+												<div class="row">
+													<div class="col s12 my_button_title" >
+														<!-- we do not have one hour slot option now -->
+														<!-- <span ng-if="value.type == 1">FLEXIBLE </span>
+														<span ng-if="value.type == 2"> ONE HOUR SLOT </span> -->
+														<h6> BETWEEN </h6>
+														<h5> {{value.time_from}}:00 to  {{value.time_to}}:00 </h5>
+													</div>
+												</div>
+											</div>
+											<div class="col s3 valign-wrapper my_button_column"  style='padding-right:0px'>
+												<span class="iconsstyle"> 
+													<span  class="my_close_button"><i class="tiny material-icons my_close_button_icon"> attach_money </i>{{value.price}}</span>
+												</span>
+												
+															<input type="radio" id='a{{value}}' value="{{value}}" class="checky" name="deliveryRadio">
+															<span class="checkmark unikk" ></span>
+															<!-- ng-click="savelocallyTime(value)" -->
+												
+											</div>
+										</div></label>
+									</div>
+								</div>
+							</div>
+
+							<div class="row"><div style='margin-top: 5vw; margin-bottom: 5vw' class="col s12 center-align">OR</div></div>
+					
+							<div class='mybutton row  z-depth-4  valign-wrapper '>
+									
+								<div class="col s9">
+									<div class="item ">
+										<label class="container" for="1">I'will leave at the door.
+											<input type="checkbox" id='1' class="checky" name="deliveryAtDoor" >
+											<span class="checkmark"></span>
+										  </label>
+									</div>
+								</div>
+								<div class="col s3 valign-wrapper my_button_column"  style='padding-right:0px'>
+									<span class="iconsstyle"> 
+										<span  class="">Free</span>
+									</span>
+									
+
+									
+								</div>
+							
+						</div>
+						<button class=" wizard-btn next"  >
+							<!-- ng-click="getLocalDetail()" -->
+							Next
+						</button>
+						<button class=" wizard-btn prev-2-btn" id="prev" >
+								Previous
+						</button>
+					</div> <!-- container ends here -->
+
+					
+						<!-- <div class="list">
+								<div class="list">
+										<div class="item headingfinal">
+											Please Select the time to pricing
+										</div>
+										<div class="item">
+											<label class="container" for="1">I'will leave at the door.
+											  <input type="checkbox" id='1' class="checky" name="deliveryAtDoor" >
+											  <span class="checkmark"></span>
+											</label>
+										</div>
+									</div>
+							
+									<div class="row finaldate1">
+										
+										<div class="col finaldate1col">
+							
+											<div class="list finaldate-list">
+												
+											 <div class="item item-thumbnail-left"  ng-repeat = "value in Timeslot1">
+												  <img src="assets\clock (1).png">
+												  <h2 ng-if="value.type == 1"> FLEXIBLE </h2>
+												  <h2 ng-if="value.type == 2"> ONE HOUR SLOT </h2>
+												  <h4> BETWEEN </h4>
+												  <p> {{value.time_from}}:00 to  {{value.time_to}}:00 </p>
+												 
+												  <label class="container" for="a{{value}}">{{value.price}}
+														<input type="radio" value="{{value}}" id="a{{value}}" class="checky" name="deliveryRadio" >
+														<span class="checkmark unikk" ></span>
+														<!-- ng-click="savelocallyDeliveryTime(value)" 
+												  </label>
+												</div>	
+												
+							
+											</div> 
+							
+										</div>
+							
+									</div>
+								
+								
+								
+									  
+						 </div> -->
+				 </section>
+				  <!-- wizard four closed -->
+
+				   <!-- wizard five open -->
+
+				 <section class="tab5 mainmyorder xcv">
+
+					<!-- The Modal -->
+					<div class="modal">
+
+							<!-- Modal content -->
+							<div class="modal-content">
+							<div class="modal-header">
+								<span class="close">&times;</span>
+								<h3>Alert !!</h3>
+							</div>
+							<div class="modal-body">
+								<p>Are you sure you want to go back</p>
+							</div>
+							<div class="modal-footer">
+								<div class="row">
+									<div class="col border-0">
+											<button class=" wizard-btn prev-modal">
+													Previous
+											</button>
+											<button class="wizard-btn close-modal ">
+													close
+											</button>
+									</div> 
+								</div>
+							</div>
+						</div> 
+					</div>
+
+					<div class="container">
+						<div class="row page-title-row">
+							<div class="col s10 page-title-row-col">
+								<div class='left-align'>
+									<h4>Order Summary</h4>
+								</div>
+							</div>
+							<div class="col s2 page-title-row-col" >
+								<div class='right-align'>
+										<div class="div_close_icon right-align" ng-click="onCancelOrder()">
+												<span class="material-icons">close</span>
+										</div>
+								</div>
+							</div>
+						</div>
+						<div class="row summary-tabs">
+							<!-- PICKUP TAB -->
+							<div class="col s6 center-align z-depth-4">
+								<div class="row">
+									<div class="col s12  center-align" style="background-color:#E1F5FE;;padding: 10px;    border-top-left-radius: 8px;"><h4 style='text-transform: uppercase'>Pickup</h4></div>
+								</div>
+								<div class="row">
+									<div class="col s12  center-align" style="">
+											{{getLocalDetail.pickupDate.name}} {{getLocalDetail.pickupDate.shortDate}}
+										<br>
+										<span class="para2heading" ng-if="getLocalDetail.pickupTime.leaveAtdoor != 'y'">
+												{{getLocalDetail.pickupTime.time_from}}:00 to {{getLocalDetail.pickupTime.time_to}}:00 </span>
+										<span ng-if="getLocalDetail.pickupTime.leaveAtdoor == 'y'">Leave at the door  </span>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col s12  center-align"  >
+										<table style='margin: 15px 0px 15px 0px;   border-collapse:  none'><tr><td><a class='my_close_button'  >CHANGE</a></td></tr></table>
+										
+									</div>
+								</div>
+							</div>
+							<!-- DROP TAB -->
+							<div class="col s6 center-align z-depth-4">
+								<div class="row">
+									<div class="col s12  center-align" style="background-color:#E1F5FE;;padding: 10px;    border-top-right-radius: 8px;"><h4 style='text-transform: uppercase'>Delievery</h4></div>
+								</div>
+								<div class="row">
+									<div class="col s12  center-align" style="">
+											{{getLocalDetail.deliveryDate.name}} {{getLocalDetail.deliveryDate.shortDate}} <br>
+										<span class="para2heading" ng-if="getLocalDetail.deliveryTime.leaveAtdoor != 'y'">
+												{{getLocalDetail.deliveryTime.time_from}}:00 to {{getLocalDetail.deliveryTime.time_to}}:00 </span>
+										<span ng-if="getLocalDetail.deliveryTime.leaveAtdoor == 'y'">Leave at the door  </span>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col s12  center-align" style="">
+											<table style='margin: 15px 0px 15px 0px;   border-collapse:  none'><tr><td><a class='my_close_button'  >Change</a></td></tr></table>
+										
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row  valign-wrapper mybutton  z-depth-4" style='height: unset; background-color: #E1F5FE'>
+							<div class="col s2"><img src='images/dollar.png' width="100%"></div>
+							<div class="col s10">
+								<b>Extra Charges</b><br>
+								<div class="item item-body orderlistbody">	
+									
+										<div  ng-show="getLocalDetail.pickupDate.price">
+											<i class="icon ion-ios-plus-outline" > </i> ${{getLocalDetail.pickupDate.price}} - {{getLocalDetail.pickupDate.name}} Pickup
+										</div>
+									
+									
+										<div  ng-show="getLocalDetail.pickupTime.price && getLocalDetail.pickupTime.price != '0'">
+											<i class="icon ion-ios-plus-outline" > </i>  ${{getLocalDetail.pickupTime.price}} - Fixed time Pickup 
+										</div>
+										
+								</div>
+		
+								<div class="item item-body orderlistbody">	
+									
+										<div ng-show="getLocalDetail.deliveryDate.price != ''">
+											<i class="icon ion-ios-plus-outline"  > </i> ${{getLocalDetail.deliveryDate.price}} - next day delievery
+										</div>
+									
+									
+										<div  ng-show="getLocalDetail.deliveryTime.price && getLocalDetail.deliveryTime.price != '0'">
+											<i class="icon ion-ios-plus-outline" > </i>  ${{getLocalDetail.deliveryTime.price}} - Fixed time delievery
+										</div>
+										
+								</div>
+								
+							</div>
+							
+						</div>
+						<div class="row  valign-wrapper mybutton  z-depth-4 "  style='height: unset; background-color: white'>
+							<div class="col s2 valign-wrapper"><img src='images/mastercard.png' width="100%"></div>
+							<div class="col s6">
+								<span  ng-if="!getpayment.number">
+									<a href="#/add-payment">Add Payment </a>
+								</span>
+								<span ng-if="getpayment.payment_type">
+									<span class="borderdotdot"> {{getpayment.payment_type}}<br> </span>
+								</span>
+								<span  ng-if="getpayment.number">
+									Ends With: -<span class="borderdotdot"> {{getpayment.number | limitTo:-4}} </span>
+								</span>
+								<span  ng-if="getpayment.expiry_date">
+									Expiry Date : - <span class="borderdotdot"> {{getpayment.expiry_date}} </span>
+								</span>
+								<span  ng-if="getpayment.expiry_month">
+									Expiry Month : - <span class="borderdotdot"> {{getpayment.expiry_month}} </span>
+								</span>
+							</div>
+							<div class="col s4"><table style='margin: 15px 0px 15px 0px;   border-collapse:  none'><tr><td><a class='my_close_button'  >Change</a></td></tr></table>
+							</div>
+						</div>
+
+						<div class="row mybutton  valign-wrapper  z-depth-4 ">
+							<div class="col s2 valign-wrapper"><img src='images/address.png' width="100%"></div>
+							<div class="col s6">
+								<span ng-if="getAddress.addresses.length == 0">
+									<a href="#/add-address">Add Address </a>
+								</span>
+								<span  ng-if="getAddress.addresses.length != 0">
+									<span class="borderdotdot">{{getAddress.addresses[0].street_name}}, Floor:{{getAddress.addresses[0].floor}}, Unit Number:{{getAddress.addresses[0].unit_number}}   </span>
+								</span>
+							</div>
+							<div class="col s4"><table style='margin: 15px 0px 15px 0px;   border-collapse:  none'><tr><td><a class='my_close_button'  >Change</a></td></tr></table>
+							</div>
+						</div>
+						<button class="wizard-btn submit" ng-click="createOrder()" >
+									Submit
+								</button>
+								<button class=" wizard-btn prev-2-btn" id="prev" >
+									Previous
+						</button>
+
+						
+							
+  
+					</div> <!-- end container -->
+
+					
+
+
+					
+						<!-- <div class="item item-body orderlistbody">
+								<div class="row">
+									<div class="col col-50 orderlistbody1pickup">
+										<h3 class="pickupheading"> PICKUP </h3>
+										<p class="para2heading para2headingmargin"> {{getLocalDetail.pickupDate.name}} </p>
+										<p class="para2heading">{{getLocalDetail.pickupDate.shortDate}} </p>
+										
+										<p class="para2heading" ng-if="getLocalDetail.pickupTime.leaveAtdoor != 'y'">
+											 {{getLocalDetail.pickupTime.time_from}}:00 to {{getLocalDetail.pickupTime.time_to}}:00 </p>
+										<p ng-if="getLocalDetail.pickupTime.leaveAtdoor == 'y'">leave at the door  </p>
+									</div>
+				
+									<div class="col col-50 orderlistbody1delivery">
+										<h3> DELIVERY </h3>
+										
+										<p class="para2heading para2headingmargin">  {{getLocalDetail.deliveryDate.shortDate}} </p>
+										
+										<p class="para2heading" ng-if="getLocalDetail.deliveryTime.leaveAtdoor != 'y'">
+											 {{getLocalDetail.deliveryTime.time_from}}:00 to {{getLocalDetail.deliveryTime.time_to}}:00 </p>	
+										<p ng-if="getLocalDetail.deliveryTime.leaveAtdoor == 'y'">leave at the door  </p>
+										<!-3333- <a class="closeankartag" ng-click="onCancelOrder()">
+											<i class="icon ion-ios-close-outline"></i>
+										</a>					 -3333->
+									</div>
+								</div>
+						</div> -->
+						
+							<!-- <div class="item item-body orderlistbody">	
+								<div class="row">
+									<div class="col" ng-show="getLocalDetail.pickupDate.name">
+										<a class="para1"> <i class="icon ion-ios-plus-outline" > </i> ${{getLocalDetail.pickupDate.price}} - {{getLocalDetail.pickupDate.name}} Pickup </a>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col" ng-show="getLocalDetail.pickupTime.price && getLocalDetail.pickupTime.price != '0'">
+										<a class="para1"> <i class="icon ion-ios-plus-outline" > </i>  ${{getLocalDetail.pickupTime.price}} - Fixid time Pickup </a>
+									</div>
+								</div>		
+							</div>
+
+							<div class="item item-body orderlistbody">	
+									<div class="row">
+										<div class="col" ng-show="getLocalDetail.deliveryDate.price != ''">
+											<a class="para1"> <i class="icon ion-ios-plus-outline"  > </i> ${{getLocalDetail.deliveryDate.price}} - next day delievery </a>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col" ng-show="getLocalDetail.deliveryTime.price && getLocalDetail.deliveryTime.price != '0'">
+											<a class="para1"> <i class="icon ion-ios-plus-outline" > </i>  ${{getLocalDetail.deliveryTime.price}} - Fixid time delievery </a>
+										</div>
+									</div>		
+								</div>
+					
+								<div class="item item-body orderlistbody">
+
+									<div class="row" ng-if="getAddress.addresses.length == 0">
+										<div class="col colmargin p-10">
+											<a href="#/add-address">Add Address <a>
+										</div>
+									</div>
+
+									<div class="row" ng-if="!getpayment.number">
+										<div class="col colmargin p-10">
+											<a href="#/add-payment">Add Payment <a>
+										</div>
+									</div>
+					
+									<div class="row" ng-if="getAddress.addresses.length != 0">
+										<div class="col colmargin">
+											<p> Address : - <span class="borderdotdot"> {{getAddress.addresses[0].floor}}  {{getAddress.addresses[0].street_name}}</span></p>
+										</div>
+									</div>
+					
+									<!-- <div class="row" ng-if="getpayment.cvcode">
+										<div class="col colmargin">
+											<p> CvCode : - <span class="borderdotdot"> {{getpayment.cvcode}} </span> </p>
+										</div>
+								
+									</div> -->
+
+									<!-- <div class="row" ng-if="getpayment.payment_type">
+							
+										<div class="col colmargin">
+											<p> Card Type : - <span class="borderdotdot"> {{getpayment.payment_type}} </span> </p>
+										</div>
+					
+									</div>
+									<div class="row" ng-if="getpayment.number">
+							
+										<div class="col colmargin">
+											<p> Card Number : - <span class="borderdotdot"> {{getpayment.number}} </span> </p>
+										</div>
+					
+									</div>
+									<div class="row" ng-if="getpayment.expiry_month">
+							
+										<div class="col colmargin">
+											<p> Expiry month : - <span class="borderdotdot"> {{getpayment.expiry_month}} </span> </p>
+										</div>
+					
+									</div>
+									<div class="row" ng-if="getpayment.expiry_date">
+										
+										<div class="col colmargin">
+											<p> Expiry month : - <span class="borderdotdot"> {{getpayment.expiry_date}} </span> </p>
+										</div>
+									</div>
+									
+								</div> -->
+					
+								<!-- <div class="item item-body orderlistbody">
+					
+									<div class="row">
+					
+										<div class="col col-50 orderlistbodypickup colmargin">
+											<h3> PICKUP </h3>
+								
+										</div>
+					
+										<div class="col col-50 orderlistbodydelivery colmargin">
+											<h3> DELIVERY </h3>
+								
+										</div>
+					
+									</div>
+					
+								</div> -->
+								
+				 </section>
+				 
+				  <!-- wizard five closed-->
+			</form>
+
+			
+			
+		</div>
+
+			
+
+		
+
+
+	</div>
+
+</div>

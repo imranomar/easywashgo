@@ -1,0 +1,63 @@
+AUTHENTICATION API:
+------------------
+
+
+http://thisisbig.ae/advanced/backend/web/customersapi/authenticate?email=usman@gmail.com&password=usman123
+
+-it returns the user id if the email and password is correct else returns 0
+
+
+CUSTOMER API:
+-------------
+
+//all customers
+http://thisisbig.ae/advanced/backend/web/customersapi @
+
+//to get relational data
+        
+http://thisisbig.ae/advanced/backend/web/customersapi?expand=order
+
+  // to get all customer's orders
+http://thisisbig.ae/advanced/backend/web/customersapi?expand=payments @ // to get customer's payment methods
+http://thisisbig.ae/advanced/backend/web/customersapi?expand=addresses @ // to get customer's addresses
+      
+//modify
+        
+$http.put('http://thisisbig.ae/advanced/backend/web/customersapi/update/?id=1', sendData); ?
+
+
+
+//create
+$http.post('http://thisisbig.ae/advanced/backend/web/customersapi/create/', sendData);
+
+
+
+//delete
+$http.delete('http://thisisbig.ae/advanced/backend/web/customersapi/delete/?id=7');
+
+ORDERS API:
+-----------
+//to get relational data
+ 
+http://thisisbig.ae/advanced/backend/web/ordersapi?expand=tasks  // to get all tasks assosiated with order e.g. pick / drop
+
+//Create, update, delete follow same pattern as above
+
+
+ADDRESSES API:
+--------------
+http://thisisbig.ae/advanced/backend/web/addressesapi
+
+//Create, update, delete follow same pattern as above
+
+PAYMENTS API:
+-------------
+
+http://thisisbig.ae/advanced/backend/web/paymentsapi
+
+//Create, update, delete follow same pattern as above
+
+
+api work, facebook requirements check, designer finalize at least one, clothes, car, meet aisha
+
+

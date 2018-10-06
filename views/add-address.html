@@ -1,0 +1,93 @@
+
+
+<div >
+
+
+        <div ng-controller="AddAddressCtrl" class="myedit">
+    
+            <div class="ion-content mainmyedit">
+    
+                <div class="bar bar-header bar-balanced">
+                    <a href="#/dashboard">
+                         <button class="button button-icon icon ion-android-arrow-back"></button>
+                    </a>
+                      <div class="h1 title"> My Address Page </div>	
+                </div>
+                
+                <div class="row topmargin">
+                    
+                </div>
+    
+                
+    
+                <div class="row">
+    
+                    <div class="col"> 
+    
+                        <form>
+    
+                            <div class="list">
+    
+                              <label class="item item-input">
+                                <span class="input-label">Street name</span>
+                                <input type="text" autofocus="" ng-model="addressData.street_name">
+                              </label>
+    
+                              <label class="item item-input">
+                                <span class="input-label">Floor</span>
+                                <input type="text" autofocus="" ng-model="addressData.floor">
+                              </label>
+                              
+                              <label class="item item-input">
+                                <span class="input-label">P.O.Box</span>
+                                <input type="text" autofocus="" ng-model="addressData.pobox">
+                              </label>
+
+                              <label class="item item-input">
+                                <span class="input-label">Unit number</span>
+                                <input type="text" autofocus="" ng-model="addressData.unit_number">
+                              </label>
+
+                              <label class="item item-input item-select">
+                                    <div class="input-label">
+                                      City
+                                    </div>
+                                    <select 
+                                    ng-model="addressData.city_id">
+                                      <option 
+                                        ng-repeat="value in cityData" 
+                                        ng-value="value.id">
+                                        {{value.title}}
+                                      </option>                                 
+                                    </select>
+                                  </label>
+                                
+                                <p class="red ml-0" ng-show"err" >{{err}}</p>
+                              <button class="button button-full button-positive" ng-click="onAddSubmit()">
+                                      Update
+                              </button>
+    
+                            </div>
+    
+                        </form>
+    
+                    </div>
+    
+                </div>	
+    
+                <div ng-if="loading" class="loader">Loading...</div>
+            
+                <!-- <div class="row bottommargin">
+                    
+                </div>
+                
+                <div class="bar bar-footer bar-balanced">
+                      <div class="title">Footer</div>
+                </div> 		 -->
+    
+    
+            </div>
+    
+        </div>
+    
+    </div>
