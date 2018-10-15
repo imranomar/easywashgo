@@ -138,10 +138,10 @@ app.controller('DashboardCtrl', function ($scope, $location, $http, appInfo, $ht
 	$scope.err = '';
 	$scope.loading = true;
 
-	$http.get(appInfo.url + 'ordersapi?expand=vault,address,customer')
+	$http.get(appInfo.url + 'tasksapi?expand=order,address,customer')
 		.then(function (res) {
 			console.log(res.data);
-			$scope.order_list = res.data;
+			$scope.task_list = res.data;
 			//  for(let value of  $scope.userdata.addresses){
 			// 	 getcity(value.city_id);
 			//  }
@@ -577,7 +577,7 @@ app.controller('OrderdetailsCtrl', function ($scope, $routeParams, $http, appInf
 	$scope.loading = true;
 
 	//get order details
-	$http.get(appInfo.url + 'ordersapi/view/?id=' + order_id + '&expand=vault,address,customer,tasks').then(function (res) {
+	$http.get(appInfo.url + 'ordersapi/view/?id=' + order_id + '&expand=vault,address,customer').then(function (res) {
 		$scope.loading = false;
 		console.log(res.data);
 		$scope.order = res.data;

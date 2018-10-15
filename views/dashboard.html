@@ -28,43 +28,29 @@
 <div ng-controller="DashboardCtrl" class="dashboard">
 	<main>
 		<div class="container" style='margin-top: 10px'>
-			<div class="row ng-scope" ng-repeat="order in order_list">
+			<div class="row ng-scope" ng-repeat="task in task_list">
 				<div class="col s12">
-					<a class='hidden_a' href='#/order-details/{{order.id}}'>
+					<a class='hidden_a' href='#/order-details/{{task.order.id}}'>
 						<div class="mybutton2 row z-depth-4" ng-class="value.price > 0 ? '' : '' ">
-							<div class="col s3 my_button_column" style='padding-right:0px'>
-								<div class="row">
-									<div class="col s12 my_button_title">
-										<img width="100%" src="images\{{order.pickup_time_from}}.png">
-									</div>
-								</div>
-							</div>
-							<div class="col s9 my_button_column" style='padding-right:0px'>
-								<div class="row">
+							<div class="col s12 my_button_column" style='padding-right:0px'>
+								<div class="">
 									<div class="col s12 my_button_title">
 										<div class="row">
-											<div class="col s8">{{order.customer.full_name}}
-												<br>
-												<b>{{order.customer.phone}}</b>
+											<div class="col s12">
+												<div>
+													Type: {{task.type}}
+													<span class="pull-right">Date: {{task.at | date: 'd MMM, yyyy'}} </span>
+												</div>
+												<div>
+													{{task.customer.full_name}}
+													<span class="pull-right">{{task.customer.phone}} </span>
+												</div>
+												{{task.address.street_name}} - {{task.address.floor}} - {{task.address.unit_number}} - {{task.address.city_id}}
 											</div>
-											<div class="col s4 right-align">
-												<b>1124</b>
-												<br>24</div>
-
 										</div>
 									</div>
 								</div>
-								<div class="row">
-									<div class="col s12">
-										<!-- we do not have one hour slot option now -->
-										<!-- <span ng-if="value.type == 1">FLEXIBLE </span>
-									<span ng-if="value.type == 2"> ONE HOUR SLOT </span> -->
-
-										{{order.address.street_name}} - {{order.address.floor}} - {{order.address.unit_number}} - {{order.address.city_id}}
-									</div>
-								</div>
-							</div>
-							<!-- <div class="col s3 valign-wrapper my_button_column"  style='padding-right:0px'>
+								<!-- <div class="col s3 valign-wrapper my_button_column"  style='padding-right:0px'>
 							<span class="iconsstyle"> 
 								<span  class="my_close_button"><i class="tiny material-icons my_close_button_icon"> attach_money </i> {{value.price}}</span>
 							</span>
@@ -74,10 +60,10 @@
 										<!-- ng-click="savelocallyTime(value)" --3>
 							
 						</div>  -->
-						</div>
+							</div>
 					</a>
+					</div>
 				</div>
 			</div>
-		</div>
 	</main>
-</div>
+	</div>

@@ -28,18 +28,6 @@
             </div>
         </div>
 
-        <div class="row page-title-row" ng-if="order.tasks && order.tasks.length >0">
-            <div class="col s12 page-title-row-col mb10">
-                <h5>Task Details</h5>
-            </div>
-            <div class="col s12 my_button z-depth-4 mb10" style='    
-            border-radius: 10px;
-            padding: 10px;' ng-repeat="task in order.tasks">
-                Id :{{task.id}}
-                <br> Type: {{task.type}}
-                <br> Date: {{task.at | date: 'd MMM, yyyy hh:m a'}}
-            </div>
-        </div>
         <div class=' row my_button z-depth-4' style='    
     border-radius: 10px;
     padding: 10px;'>
