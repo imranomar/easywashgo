@@ -44,6 +44,8 @@ http://thisisbig.ae/advanced/backend/web/ordersapi?expand=tasks  // to get all t
 //Create, update, delete follow same pattern as above
 
 
+http://thisisbig.ae/advanced/backend/web/customersapi/view/?id=8&expand=addresses,cities
+
 ADDRESSES API:
 --------------
 http://thisisbig.ae/advanced/backend/web/addressesapi

@@ -1,7 +1,6 @@
 
 <script type="text/javascript">	
-	    $(document).ready(function() { 
-
+	    $(document).ready(function() {
 			$('#close').click(function(){			
 				$("#div2").removeClass("abcd");	
 				$("#div1").removeClass("animationhide");
@@ -21,47 +20,38 @@
 	    });
 </script>
 
-
-
-
-
-
-	<div ng-controller="DashboardCtrl" class="dashboard">
-		<main>
-			<div class="container" style='margin-top: 10px'>	
-			<div 
-				class="row ng-scope" 
-				ng-repeat="order in order_list" 
-				>
-				<div class="col s12">
-				<a class='hidden_a' href='#/order-details/{{order.id}}'>
-					<div class="mybutton2 row z-depth-4" ng-class="value.price > 0 ? '' : '' ">
-						<div class="col s3 my_button_column" style='padding-right:0px'  >
-							<div class="row">
-								<div class="col s12 my_button_title" ><img width="100%" src="images\{{order.time_from}}.png"></div>
-							</div>
-						</div>
-						<div class="col s9 my_button_column" style='padding-right:0px' >
-							<div class="row">
-								<div class="col s12 my_button_title" >
-									<div class="row">
-										<div class="col s8">{{order.customer.full_name}}<br><b>{{order.customer.phone}}</b></div>
-										<div class="col s4 right-align" ><b>1124</b><br>24</div>
-										
+<div ng-controller="DashboardCtrl" class="dashboard">
+	<main>
+		<div class="container" style='margin-top: 10px'>	
+		<div class="row ng-scope" ng-repeat="task in dashboard_data">
+			<div class="col s12">
+				<a class='hidden_a' href='#/task-details/{{task.id}}'>
+				<div class="mybutton2 row z-depth-4" ng-class="value.price > 0 ? '' : '' ">
+					<div class="col s12 my_button_column" style='padding-right:0px' >
+						<div class="row">
+							<div class="col s12 my_button_title" >
+								<div class="row">
+									<div class="col s12">
+										{{task.full_name}} (<em>{{task.email}}</em>)<br/>
+										{{task.phone}}<br/><br/>
+										<small><b>Address:</b> Floor: {{task.floor}}, {{task.street_name}}, {{task.city}}, PoBox: {{task.pobox}}</small>
 									</div>
 								</div>
 							</div>
-							<div class="row">
-								<div class="col s12" >
-									<!-- we do not have one hour slot option now -->
-									<!-- <span ng-if="value.type == 1">FLEXIBLE </span>
-									<span ng-if="value.type == 2"> ONE HOUR SLOT </span> -->
-									
-									{{order.address.street_name}}  - 
-									{{order.address.floor}} -
-									{{order.address.unit_number}}  -
-									{{order.address.city_id}} 
-								</div>
+						</div>
+						<div class="row">
+							<div class="col s6">									
+								<small>
+									Pickup Date: {{task.pickup_date}}<br/>
+									Drop Date: {{task.drop_date}}
+								</small>
+							</div>
+							<div class="col s6">						
+								<small>
+									Pickup Price: {{task.pickup_price}}<br/>
+									Drop Price: {{task.drop_price}}
+								</small>
+							</div>
 							</div>
 						</div>
 						<!-- <div class="col s3 valign-wrapper my_button_column"  style='padding-right:0px'>

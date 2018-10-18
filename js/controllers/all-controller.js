@@ -133,27 +133,91 @@ app.run(function($rootScope){
 
 	$('.navbar-fixed').show();
 	$('.sidenav').sidenav('close');
-	$scope.order_list = [];
 	
 	$scope.err = '';
 	$scope.loading = true;
+	$scope.dashboard_data = [];
 	
-	$http.get(appInfo.url+'ordersapi?expand=vault,address,customer')
-	.then(function(res){
-	 console.log(res.data);
-	 $scope.order_list = res.data;
-	//  for(let value of  $scope.userdata.addresses){
-	// 	 getcity(value.city_id);
-	//  }
-	//  getPassword();
+	$http.get(appInfo.url+'ordersapi?expand=tasks').then(function(res) {
+		//console.log(res.data);
+		for(let task of res.data) {
+			getCustomers(task);
+		}
 	}).catch(function(err){
-		  console.log(err);
+		$scope.err = err;
 	});
 
+	// Customer records
+	function getCustomers(task) {
+		$http.get(appInfo.url+'customersapi/view/?id='+task.customer_id+'&expand=addresses').then(function(res) {
+			let cust = res.data;
+			getcity(task,cust);
+		}).catch(function(err){
+			$scope.err = err;
+		});
+	}
+	
+	// City records
+	function getcity(task,cust) {
+		$http.get(appInfo.url+'citiesapi/view?id='+cust.addresses[0].city_id).then(function(res) {
+			$scope.dashboard_data.push({
+				drop_date: task.drop_date,
+				drop_price: task.drop_price,
+				pickup_date: task.pickup_date,
+				pickup_price: task.pickup_price,
+				email: cust.email,
+				full_name: cust.full_name,
+				phone: cust.phone,
+				pobox: cust.addresses[0].pobox,
+				floor: cust.addresses[0].floor,
+				street_name: cust.addresses[0].street_name,
+				city: res.data.title
+			});
+		}).catch(function(err) {
+			$scope.err = err;
+		});
+	}
 
-
-
-
+	/*getCustomers().then(function(res1) {
+		console.log(res1.data);	
+		getTasks().then(function(res2) {
+			console.log(res2.data);
+			for(let key2 in res2.data) {
+				if(res2.data.hasOwnProperty(key2)) {
+					for(let key1 in res1.data) {
+						if(res1.data.hasOwnProperty(key1)) {
+							if(res2.data[key2].customer_id == res1.data[key1].id) {
+								$scope.dashboard_data.push({
+									email: res1.data[key1].email,
+									full_name: res1.data[key1].full_name,
+									phone: res1.data[key1].phone,
+									drop_date: res2.data[key2].drop_date,
+									drop_price: res2.data[key2].drop_price,
+									pickup_date: res2.data[key2].pickup_date,
+									pickup_price: res2.data[key2].pickup_price,
+								});
+								break;
+							}
+						}
+					}
+				}
+			}
+		}, function(err2) {
+			$scope.err = err2;
+			console.log(err2);
+		});
+	}, function(err1) {
+		$scope.err = err1;
+		console.log(err1);
+	});*/
+	
+	//$http.get(appInfo.url+'ordersapi?expand=vault,address,customer')
+	/*$http.get(appInfo.url+'ordersapi?expand=tasks').then(function(res) {
+	 	//console.log(res.data);
+	 	task_list = res.data;
+	}).catch(function(err){
+		  console.log(err);
+	});*/
 
  	$scope.menuopen = function(){
  		//$location.path("/menu");
@@ -161,8 +225,7 @@ app.run(function($rootScope){
 
 	$scope.closemenu = function(){
 		angular.element('.Menu').remove();
-	}
-	
+	}	
  });
 
 
