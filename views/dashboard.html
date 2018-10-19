@@ -25,7 +25,7 @@
 		<div class="container">
 			<div class="row" ng-repeat="task in tasks_list" ng-if="tasks_list.length > 0">
 				<div class="col s12">
-					<a class="hidden_a" href="#/order-details/{{task.order_id}}">
+					<a class="hidden_a" href="#/task-details/{{task.id}}">
 						<div class="row z-depth-4 module-item" ng-switch="task.type">
 							<div ng-switch-when="1">
 								<div class="col s3">

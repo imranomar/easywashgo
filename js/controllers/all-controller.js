@@ -700,6 +700,60 @@ app.controller("DeliverydateCtrl", function($scope) {
   // body...
 });
 
+app.controller("TaskDetailsCtrl", function(
+  $scope,
+  $routeParams,
+  $http,
+  appInfo,
+  $httpParamSerializer,
+  $location
+) {
+  $(".navbar-fixed").show();
+  $(".sidenav").sidenav("close");
+
+  $(document).ready(function() {
+    $(".modal").modal();
+  });
+
+  //  localstorage keys
+  var task_id = $routeParams.id;
+  var task_status = 0;
+
+  $scope.err = "";
+  $scope.loading = true;
+
+  //get task details
+  $http
+    .get(
+      appInfo.url +
+        "tasksapi/view/?id=" +
+        task_id +
+        "&expand=order,address,customer"
+    )
+    .then(function(res) {
+      $scope.loading = false;
+      console.log(res.data);
+      $scope.task = res.data;
+
+      //not picked get laundry pricing to close
+      if ($scope.task.order && $scope.task.order.status == 0) {
+        $http
+          .get(appInfo.url + "laundrypricingapi")
+          .then(function(res) {
+            $scope.loading = false;
+            console.log(res.data);
+            $scope.laundrypricing = res.data;
+          })
+          .catch(function(err) {
+            console.log(err);
+          });
+      }
+    })
+    .catch(function(err) {
+      console.log(err);
+    });
+});
+
 app.controller("OrderdetailsCtrl", function(
   $scope,
   $routeParams,
