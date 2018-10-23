@@ -1,6 +1,7 @@
 var app = angular.module("laundryApp");
 
 app.run(function($rootScope) {
+  debugger;
   $rootScope.a = "​http://localhost/advanced/backend/web/";
 });
 
@@ -721,6 +722,18 @@ app.controller("TaskDetailsCtrl", function(
 
   $scope.err = "";
   $scope.loading = true;
+  $scope.task = {
+    id: null,
+    other_id: null,
+    comments: null
+  };
+
+  $scope.laundrypricing = [];
+
+  $scope.filterIndex = 0;
+  $scope.filterOptions = ["Upper Body", "Lower Body", "Non Wearable"];
+
+  $scope.canGoPreviousStep = false;
 
   //get task details
   $http
@@ -742,7 +755,16 @@ app.controller("TaskDetailsCtrl", function(
           .then(function(res) {
             $scope.loading = false;
             console.log(res.data);
-            $scope.laundrypricing = res.data;
+            if (res.data && res.data.length > 0) 
+            {
+              var data = res.data;
+              $scope.laundrypricing = data.map(function(el) 
+              {
+                var obj = Object.assign({}, el);
+                obj.items_count = 0;
+                return obj;
+              });
+            }
           })
           .catch(function(err) {
             console.log(err);
@@ -752,6 +774,117 @@ app.controller("TaskDetailsCtrl", function(
     .catch(function(err) {
       console.log(err);
     });
+
+    $scope.filterByCategory = function(item) 
+    {
+      if($scope.filterIndex > -1)
+      {
+        var filterValue = $scope.filterOptions[$scope.filterIndex];
+
+        if(item.type == filterValue)
+          return true;
+        else
+          return false;
+      } 
+      else 
+      {
+        return true;
+      }
+    }
+
+    $scope.filterItems = function(index)
+    {
+      $scope.filterIndex = index;
+    }
+
+    $scope.addItem = function(id)
+    {
+      var index = $scope.laundrypricing.findIndex(function(item){
+        return item.id == id
+      })
+      if(index > -1)
+        $scope.laundrypricing[index].items_count +=1;
+    }
+
+    $scope.removeItem = function(id)
+    {
+      var index = $scope.laundrypricing.findIndex(function(item){
+        return item.id == id
+      })
+
+      if(index > -1)
+      {
+        if($scope.laundrypricing[index].items_count > 0)
+          $scope.laundrypricing[index].items_count -=1;
+      }
+    }
+
+    $scope.filterByItemsCount = function(item) 
+    {
+      if(item.items_count > 0)
+        return true;
+      else 
+        return false;
+    }
+
+    $scope.goNext = function()
+    {
+      $scope.canGoPreviousStep = true;
+    }
+
+    $scope.goPrevious = function() 
+    {
+      $scope.canGoPreviousStep = false;
+    }
+
+    $scope.ClosePickupTask = function()
+    {
+      if ($scope.task.id.length == 0) {
+        alert("Please enter id address");
+        console.log("Please add address");
+        return;
+      }
+  
+      let getItemLocallyCustomer = localStorage.getItem("laundryUser");
+      var confuseDatepickup = $scope.getLocalDetail.pickupDate.date;
+      var simpleDatepickup = new Date(confuseDatepickup)
+        .toISOString()
+        .substr(0, 10);
+      var confuseDate = $scope.getLocalDetail.deliveryDate.date;
+      var simpleDate = new Date(confuseDate).toISOString().substr(0, 10);
+  
+      var order_items = $scope.laundrypricing.filter(function(item)
+      {
+        return item.items_count > 0;
+      });
+
+
+
+      
+      let req = {
+        method: "POST",
+        url: appInfo.url + "orderitemsapi/create",
+        data: $httpParamSerializer(data),
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        }
+      };
+
+      $scope.err = "";
+      $scope.loading = true;
+      $http(req)
+        .then(function(res) {
+          $scope.loading = false;
+          removeLoalStorageAndGoToDashboard();
+          console.log(res);
+        })
+        .catch(function(error) {
+          $scope.loading = false;
+          let err = error.data;
+          console.log(error);
+        });
+    }
+    
 });
 
 app.controller("OrderdetailsCtrl", function(

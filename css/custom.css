@@ -213,6 +213,81 @@ textarea.materialize-textarea {
   height: 2rem;
 }
 
+/* Margin Classes */
+.m0 {
+  margin: 0 !important;
+}
+
+.ml0 {
+  margin-left: 0 !important;
+}
+
+.mr0 {
+  margin-right: 0 !important;
+}
+
+.mb5 {
+  margin-bottom: 5px !important;
+}
+
+/* Padding Classes */
+.p0 {
+  padding: 0 !important;
+}
+
+.pl0 {
+  padding-left: 0 !important;
+}
+
+.pr0 {
+  padding-right: 0 !important;
+}
+
+.p5 {
+  padding: 5px !important;
+}
+
+/* text align classes */
+.text-left {
+  text-align: left;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.dotted-border {
+  border: 1px dotted #ccc;
+}
+
+.border-2x {
+  border-width: 2px;
+}
+
+.col2 {
+  width: 20%;
+}
+
+.col3 {
+  width: 30%;
+}
+
+.col4 {
+  width: 40%;
+}
+
+.col5 {
+  width: 50%;
+}
+
+.valign-top {
+  vertical-align: top;
+}
+
 /* CREATE OTDER STARTS HERE */
 
 .my_button_column {
@@ -334,49 +409,6 @@ tr {
 .font-bold {
   font-weight: bold;
 }
-.m0 {
-  margin: 0;
-}
-
-.p0 {
-  padding: 0;
-}
-
-.p5 {
-  padding: 5px;
-}
-
-.dotted-border {
-  border: 1px dotted #ccc;
-}
-
-.border-2x {
-  border-width: 2px;
-}
-
-.col2 {
-  width: 20%;
-}
-
-.col3 {
-  width: 30%;
-}
-
-.col4 {
-  width: 40%;
-}
-
-.col5 {
-  width: 50%;
-}
-
-.valign-top {
-  vertical-align: top;
-}
-
-.mb5 {
-  margin-bottom: 5px;
-}
 
 .module-item {
   padding: 10px 5px 5px;
@@ -410,4 +442,93 @@ tr {
 .dashboard-footer .row .col.active {
   color: #20b9e5;
 }
+
+/* Laundry Item Modal */
+
+.laundry-item-row .item-title {
+  padding: 5px 10px;
+  border: 1px solid;
+  display: block;
+  font-size: 14px;
+}
+.laundry-item-row .item-remove i {
+  display: inline-block;
+  font-size: 21px;
+  padding: 5px;
+  border: 1px solid;
+  color: #fb8c69;
+}
+
+.laundry-modal .laundry-footer {
+  position: fixed;
+  z-index: 100;
+  bottom: 0px;
+  left: 0px;
+  width: 100%;
+  border-top: 1px solid #ddd;
+    padding-top: 10px;
+}
+
+.laundry-modal .laundry-filter .row .col {
+  color: #fff;
+  padding: 12px 3px;
+  box-sizing: border-box;
+  display: block;
+  cursor: pointer;
+  border-right: 1px dotted #fff;
+}
+
+.laundry-modal .laundry-filter .row .col:last-child {
+  border-right: none;
+}
+.laundry-modal .laundry-filter .col.active {
+  color: #20b9e5;
+}
+
+.laundry-modal .laundry-filter {
+  background-color: #0c3f5a;
+  color: white;
+  width: 100%;
+}
+
+.laundry-footer .tag {
+  padding: 3px 4px;
+  background: #ccc;
+  margin-right: 5px;
+  border-radius: 4px;
+  font-size: 10px;
+  display: inline-block;
+  margin-bottom: 5px;
+}
+
+.laundry-footer .tag .item_count {
+  background: #fafafa;
+  border-radius: 100%;
+  width: 15px;
+  height: 15px;
+  margin-left: 5px;
+  display: inline-block;
+  padding-left: 5px;
+  color: #333;
+}
+
+/* Modal CSS */
+.modal .modal-header {
+  padding: 10px;
+  background: #0c3f5a;
+  color: #fff;
+}
+
+.modal .modal-content {
+  padding: 15px;
+}
+
+.modal {
+  box-shadow: none;
+}
+.modal .modal-header h5{font-size: 18px;}
+.modal .modal-header a {
+  color: #fff;
+}
+
 /* CREATE ORDER ENDS HERE */

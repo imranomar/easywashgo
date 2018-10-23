@@ -3,9 +3,6 @@
 <html lang="en">
 
 <head>
-
-
-
     <title> EazyWash Go!</title>
 
     <meta charset="utf-8">
@@ -61,46 +58,50 @@
 
         input {
             font-size: 4.5vw !important;
-            font-family: 'roboto';
+            font-family: "roboto";
         }
     </style>
 </head>
 
 <body ng-app="laundryApp">
-
-
-
-
-    <div style='display:none' class="navbar-fixed">
-
+    <div style="display:none" class="navbar-fixed">
         <div class="nav-wrapper">
 
-            <table class='top_bar' style='' cellspcaing=0 cellpadding=0>
+            <table class="top_bar" cellspcaing=0 cellpadding=0>
                 <tr>
-
-                    <td width='20%' valign='center' align='middle'><a onclick="return false;" href="#" style='display:block;'
-                            data-target="slide-out" class="sidenav-trigger"><i style='font-size: 7vw' class="material-icons">dehaze</i></a></td>
-                    <td width='60%' valign='center' align='middle'><img src="images/logo-top.png" style="height:7vw"
-                            alt=""><span style='color:white; margin-left: 7px; position: relative; top: -5px;font-weight:bold; font-size: 20px'>GO!</span></td>
-                    <td width='20%' valign='center' align='middle'><a href="#"><i style='font-size: 7vw; ' class="material-icons">local_phone</i></a></td>
+                    <td width="20%" valign="center" align="middle">
+                        <a href="javascript:void(0)" style="display:block;" data-target="slide-out" class="sidenav-trigger"><i
+                                style="font-size: 7vw" class="material-icons">dehaze</i></a>
+                    </td>
+                    <td width="60%" valign="center" align="middle">
+                        <a href="#/dashboard">
+                            <img src="images/logo-top.png" style="height:7vw" alt=""><span style="color:white; margin-left: 7px; position: relative; top: -5px;font-weight:bold; font-size: 20px">GO!</span>
+                        </a>
+                    </td>
+                    <td width="20%" valign="center" align="middle">
+                        <a href="javascript:void(0)" ng-if="!showBackBtn || showBackBtn == false">
+                            <i style="font-size: 7vw;" class="material-icons">local_phone</i>
+                        </a>
+                        <a href="javascript:window.history.back()" ng-if="showBackBtn == true">
+                            <i style="font-size: 10vw;" class="material-icons">chevron_left</i>
+                        </a>
+                    </td>
 
                 </tr>
             </table>
         </div>
-        <div class='curve'></div>
+        <div class="curve"></div>
 
     </div>
-    <ng-view>
-
-    </ng-view>
+    <ng-view></ng-view>
 
 
     <!-- menu starts here -->
     <div ng-controller="MenuCtrl">
         <ul id="slide-out" class="sidenav">
             <li>
-                <div class="" style='text-align:center; margin-top: 20px; width: 100%'>
-                    <img class="" style='width:4em' src="images/logo.png">
+                <div class="" style="text-align:center; margin-top: 20px; width: 100%">
+                    <img class="" style="width:4em" src="images/logo.png">
                 </div>
             </li>
 
@@ -120,19 +121,19 @@
             <li>
                 <div class="divider"></div>
             </li>
-            <li><a href="#!" class='line-through'><i class="tiny material-icons">notifications</i>Notifications</a></li>
+            <li><a href="#!" class="line-through"><i class="tiny material-icons">notifications</i>Notifications</a></li>
             <li>
                 <div class="divider"></div>
             </li>
-            <li><a href="#!" class='line-through'><i class="tiny material-icons">question_answer</i>FAQs</a></li>
+            <li><a href="#!" class="line-through"><i class="tiny material-icons">question_answer</i>FAQs</a></li>
             <li>
                 <div class="divider"></div>
             </li>
-            <li><a href="#!" class='line-through'><i class="tiny material-icons">attach_money</i>Pricing</a></li>
+            <li><a href="#!" class="line-through"><i class="tiny material-icons">attach_money</i>Pricing</a></li>
             <li>
                 <div class="divider"></div>
             </li>
-            <li><a href="#!" class='line-through'><i class="tiny material-icons">cloud</i>About EazyWash</a></li>
+            <li><a href="#!" class="line-through"><i class="tiny material-icons">cloud</i>About EazyWash</a></li>
             <li>
                 <div class="divider"></div>
             </li>
@@ -159,23 +160,20 @@
 <!-- <script src="js/bootstrap.min.js"></script> -->
 <script src="js/materialize.min.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var elems = document.querySelectorAll('.sidenav');
+    document.addEventListener("DOMContentLoaded", function () {
+        var elems = document.querySelectorAll(".sidenav");
         var instances = M.Sidenav.init(elems, options);
     });
 
     // Initialize collapsible (uncomment the lines below if you use the dropdown variation)
-    // var collapsibleElem = document.querySelector('.collapsible');
+    // var collapsibleElem = document.querySelector(".collapsible");
     // var collapsibleInstance = M.Collapsible.init(collapsibleElem, options);
 
     // Or with jQuery
 
     $(document).ready(function () {
-        $('.sidenav').sidenav();
+        $(".sidenav").sidenav();
     });
-
-
-
 </script>
 
 </html>

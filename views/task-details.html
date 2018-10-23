@@ -78,34 +78,94 @@
             </div>
         </div>
 
-        <!-- Modal Structure -->
-        <div id="modal1" class="modal  modal-fixed-footer">
-            <div class="modal-content">
-                <h4>Enter Laundry Details</h4>
+        <div class='row my_button'>
+            <!-- Modal Trigger -->
+            <button data-target="ClosePickupTaskModal" class="btn modal-trigger">Modal</button>
+        </div>
 
-                <div class="row" ng-repeat="laundry in laundrypricing">
-                    <div class="col s8">{{laundry.title}}</div>
-                    <div class="col s4">
-                        <input type="text" id='' value='0'>
+        <!-- Modal Structure -->
+        <div id="ClosePickupTaskModal" class="modal laundry-modal modal-fixed-footer">
+            <div class="modal-header">
+                <div class="row m0">
+                    <div class="col s1 p0">
+                        <a href="javascript:void(0)" class="back-btn" ng-if="canGoPreviousStep" ng-click="goPrevious()"><i class="material-icons">chevron_left</i></a>
+                    </div>
+                    <div class="col s10 p0 center-align">
+                        <h5 style="margin-top:3px;">{{canGoPreviousStep?'Pickup Complete':'Enter Laundry Details'}}</h5>
+                    </div>
+                    <div class="col s1 p0 right-align">
+                        <a href="javascript:void(0)" class="modal-close"><i class="material-icons">close</i></a>
                     </div>
                 </div>
-
             </div>
-            <div class="modal-footer">
-                <a href="" class="modal-close waves-effect waves-green btn-flat">Ok</a>
-                <a href="" class="modal-close waves-effect waves-green btn-flat">Cancel</a>
+            <div class="modal-content">
+                <div ng-if="!canGoPreviousStep">
+                    <div class="row laundry-item-row" ng-repeat="laundry in laundrypricing | filter:filterByCategory">
+                        <div class="col s7 pl0 text-center">
+                            <a href="javascript:void(0)" class="item-title" ng-click="addItem(laundry.id)">{{laundry.title}}</a>
+                        </div>
+                        <div class="col s3 p0">
+                            <input type="text" readonly="readonly" value="{{laundry.items_count}}">
+                        </div>
+                        <div class="col s2 pr0 text-right">
+                            <a href="javascript:void(0)" class="item-remove" ng-click="removeItem(laundry.id)">
+                                <i class="material-icons">remove_circle_outline</i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="laundry-footer">
+                        <div class="row">
+                            <div class="col s8">
+                                <label class="tag" ng-repeat="laundry in laundrypricing | filter:filterByItemsCount">{{laundry.title}}<span class="item_count">{{laundry.items_count}}</span></label>
+                            </div>
+                            <div class="col s4 text-right" ng-if="(laundrypricing | filter:filterByItemsCount).length > 0">
+                                <button type="button" class="waves-effect waves-green btn-small" ng-click="goNext()">NEXT</button>
+                            </div>
+                        </div>
+                        <section class="laundry-filter">
+                            <div class="row m0">
+                                <div class="col s3 center-align" ng-class="{'active': filterIndex == $index}" ng-repeat="filter in filterOptions" ng-click="filterItems($index)">
+                                    <div class="font-bold">{{filter}}</div>
+                                </div>
+                                <div class="col s3 center-align" ng-class="{'active': filterIndex == -1}"  ng-click="filterItems(-1)">
+                                    <div class="font-bold">All</div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+                <div class="" ng-if="canGoPreviousStep">
+                    <div class="row">
+                        <div class="col s12">
+                            <h6>Enter Id</h6>
+                        </div>
+                        <div class="col s12">
+                            <input type="text" ng-model="task.id" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col s12">
+                            <h6>Enter Id 2</h6>
+                        </div>
+                        <div class="col s12">
+                            <input type="text" ng-model="task.other_id" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col s12">
+                            <h6>Enter Comments</h6>
+                        </div>
+                        <div class="col s12">
+                            <textarea class="materialize-textarea" rows="4" ng-model="task.comments"></textarea>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <button type="button" class="btn btn-primary" ng-click="">DONE</button>
+                    </div>
+                </div>
             </div>
         </div>
 
-
-        <!-- Modal Trigger -->
-        <button data-target="modal1" class="btn modal-trigger">Modal</button>
-
-
-        <br>
-        <br>
-        <br>
-        <br>
 
         <section style='position: fixed;z-index:100; bottom: 0px; left:0px; background-color:#0c3f5a; color:white; width: 100%'>
             <div class="row" style='padding-top:10px'>
