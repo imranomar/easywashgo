@@ -1,7 +1,6 @@
 var app = angular.module("laundryApp");
 
 app.run(function($rootScope) {
-  debugger;
   $rootScope.a = "​http://localhost/advanced/backend/web/";
 });
 
@@ -720,20 +719,41 @@ app.controller("TaskDetailsCtrl", function(
   var task_id = $routeParams.id;
   var task_status = 0;
 
+  $scope.customer_id = localStorage.getItem("laundryUser");
   $scope.err = "";
   $scope.loading = true;
+
   $scope.task = {
     id: null,
     other_id: null,
     comments: null
   };
-
+  $scope.appoptions = {};
   $scope.laundrypricing = [];
+  $scope.order_items = [];
+  $scope.vault_details = {};
 
   $scope.filterIndex = 0;
   $scope.filterOptions = ["Upper Body", "Lower Body", "Non Wearable"];
 
   $scope.canGoPreviousStep = false;
+  
+  getVault();
+  
+  //get Vault details
+  function getVault() {
+    $http
+      .get(appInfo.url + "customersapi/view/?id=" + $scope.customer_id + "&expand=vault")
+      .then(function(res) {
+        var vaults = res.data.vault;
+        if(vaults && vaults.length > 0) {
+          $scope.vault_details = vaults[vaults.length-1];
+        }
+      })
+      .catch(function(err) {
+        console.log(err);
+      });
+  }
 
   //get task details
   $http
@@ -744,13 +764,16 @@ app.controller("TaskDetailsCtrl", function(
         "&expand=order,address,customer"
     )
     .then(function(res) {
-      $scope.loading = false;
       console.log(res.data);
       $scope.task = res.data;
 
       //not picked get laundry pricing to close
-      if ($scope.task.order && $scope.task.order.status == 0) {
-        $http
+      if ($scope.task.order && $scope.task.order.status == 0)
+      {
+
+        if($scope.task.type &&  $scope.task.type == 1)
+        {
+          $http
           .get(appInfo.url + "laundrypricingapi")
           .then(function(res) {
             $scope.loading = false;
@@ -769,7 +792,47 @@ app.controller("TaskDetailsCtrl", function(
           .catch(function(err) {
             console.log(err);
           });
-      }
+        } 
+        else
+        {
+          $http
+          .get(appInfo.url + "optionsapi")
+          .then(function(res) {
+            if(res.data && res.data.length > 0)
+            {
+              $scope.appoptions = res.data[0];
+              console.log($scope.appoptions);
+            }
+          })
+          .catch(function(err) {
+            console.log(err);
+          });
+          
+          $http
+          .get(appInfo.url + "ordersapi/view/?id=" +
+          $scope.task.order_id +
+          "&expand=items")
+          .then(function(res) {
+            $scope.loading = false;
+            console.log(res.data);
+            var result = res.data;
+            if (result)
+            {
+              if(result.items && result.items.length > 0 ) 
+              {
+                $scope.order_items = result.items;
+              }
+            }
+          })
+          .catch(function(err) {
+            console.log(err);
+          });
+        }   
+      } 
+      else
+      {
+        $scope.loading = false;
+      } 
     })
     .catch(function(err) {
       console.log(err);
@@ -858,8 +921,6 @@ app.controller("TaskDetailsCtrl", function(
         return item.items_count > 0;
       });
 
-
-
       
       let req = {
         method: "POST",
@@ -883,6 +944,62 @@ app.controller("TaskDetailsCtrl", function(
           let err = error.data;
           console.log(error);
         });
+    }
+
+    $scope.getTotalAmount = function()
+    {
+      var totalAmount = 0;
+
+      if($scope.task.order.same_day_pickup == 1 && ($scope.appoptions && $scope.appoptions.same_day_pickup_price))
+      {
+        totalAmount += parseInt($scope.appoptions.same_day_pickup_price);
+      }
+
+      if($scope.task.order.pickup_price && $scope.task.order.pickup_price != '0')
+      {
+        totalAmount += parseInt($scope.task.order.pickup_price);
+      }
+
+      if($scope.task.order.next_day_drop == 1 && ($scope.appoptions && $scope.appoptions.next_day_delivery_price))
+      {
+        totalAmount += parseInt($scope.appoptions.next_day_delivery_price);
+      }
+
+      if($scope.task.order.drop_price && $scope.task.order.drop_price)
+      {
+        totalAmount += parseInt($scope.task.order.drop_price);
+      }
+
+      angular.forEach($scope.order_items, function(value, key)
+      {
+        totalAmount += parseInt(value.price);
+      });
+      return totalAmount
+    }
+
+    $scope.makePayment = function() 
+    {
+      var doc = document.getElementById("iframe2").contentWindow.document;
+      doc.open();
+      doc.write(
+        'Loading... \
+      \
+                    <form action="https://payment.architrade.com/cgi-ssl/ticket_auth.cgi" method="post">\
+                    <input type="hidden" name="merchant" value="90246240" />\
+                    <input type="hidden" name="ticket" value="22755116931" />\
+                    <input type="hidden" name="amount" value="10" />\
+                    <input type="hidden" name="currency" value="578" />\
+                    <input type="hidden" name="orderid" value="1" />\
+                    <input type="hidden" name="preauth" value="1" />\
+                    <input type="hidden" name="test" value="1" />\
+                    <INPUT type="Submit" id="submit" name="submit" style="visibility:hidden"  value="TICKET DEMO"> \
+                      </FORM> \
+                      <script src="js/jquery-3.3.1.slim.min.js"></script> \
+                      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> \
+              <script>$("#submit").click();</script>\
+                      '
+      );
+      doc.close();
     }
     
 });
@@ -1961,6 +2078,7 @@ app.controller("AddPaymentCtrl", function(
 ) {
   let userId = localStorage.getItem("laundryUser");
   $scope.paymentDetails = {};
+  debugger;
   $scope.userId = userId;
 
   //todo:after every 20 milliseconds keep checking if the content of the iframe is
@@ -2000,6 +2118,7 @@ app.controller("AddPaymentCtrl", function(
   doc.close();
 
   $scope.onAddPayment = function() {
+    debugger;
     let data = {
       name: $scope.paymentDetails.name,
       number: $scope.paymentDetails.number,
@@ -2061,4 +2180,48 @@ app.controller("AddPaymentCtrl", function(
         // console.log(error);
       });
   }
+});
+
+
+app.controller("PaymentSuccessCtrl", function(
+  $scope,
+  $routeParams,
+  $http,
+  appInfo,
+  $httpParamSerializer,
+  $location
+) {
+
+  $(".navbar-fixed").show();
+  $(".sidenav").sidenav("close");
+
+  $(document).ready(function() {
+    $(".modal").modal();
+  });
+
+  //  localstorage keys
+  var id = $routeParams.id;
+  var type = $routeParams.type;
+  
+});
+
+app.controller("PaymentErrorCtrl", function(
+  $scope,
+  $routeParams,
+  $http,
+  appInfo,
+  $httpParamSerializer,
+  $location
+) {
+
+  $(".navbar-fixed").show();
+  $(".sidenav").sidenav("close");
+
+  $(document).ready(function() {
+    $(".modal").modal();
+  });
+  //  localstorage keys
+  var id = $routeParams.id;
+  var type = $routeParams.type;
+  
 });

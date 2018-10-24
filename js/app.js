@@ -124,7 +124,6 @@ app.run(function($rootScope, updateFCMToken) {
 
   $rootScope.showBackBtn = false;
   $rootScope.$on("$routeChangeStart", function(event, currRoute, prevRoute) {
-    debugger;
     var currentRouteDetails = currRoute.$$route;
     var showBackBtn = currentRouteDetails.showBackBtn;
 
@@ -362,6 +361,26 @@ app.config(function($routeProvider, $locationProvider) {
     })
     .when("/add-payment", {
       templateUrl: "views/add-payment.html",
+      resolve: {
+        check: function($location) {
+          if (!getCookie(cookieName)) {
+            $location.path("/login");
+          }
+        }
+      }
+    })
+    .when("/payment-success/:type/:id", {
+      templateUrl: "views/payment-success.html",
+      resolve: {
+        check: function($location) {
+          if (!getCookie(cookieName)) {
+            $location.path("/login");
+          }
+        }
+      }
+    })
+    .when("/payment-error/:type/:id", {
+      templateUrl: "views/payment-error.html",
       resolve: {
         check: function($location) {
           if (!getCookie(cookieName)) {

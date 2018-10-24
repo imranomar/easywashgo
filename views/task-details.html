@@ -10,7 +10,7 @@
 <div ng-controller="TaskDetailsCtrl">
     <!-- wizard one start -->
 
-    <div class="container">
+    <div class="container" style="padding-bottom:50px;">
         <div class="row page-title-row">
             <div class="col s9 page-title-row-col">
                 <div class='left-align'>
@@ -78,17 +78,20 @@
             </div>
         </div>
 
-        <div class='row my_button'>
+        <div class='row my_button text-center'>
             <!-- Modal Trigger -->
-            <button data-target="ClosePickupTaskModal" class="btn modal-trigger">Modal</button>
+            <button data-target="ClosePickupTaskModal" class="btn modal-trigger" ng-if="task.type == '1'">Close Pickup
+                Task</button>
+            <button data-target="CloseDropTaskModal" class="btn modal-trigger" ng-if="task.type == '2'">Close Drop Task</button>
         </div>
 
-        <!-- Modal Structure -->
+        <!-- Close Pickup Modal Structure -->
         <div id="ClosePickupTaskModal" class="modal laundry-modal modal-fixed-footer">
             <div class="modal-header">
                 <div class="row m0">
                     <div class="col s1 p0">
-                        <a href="javascript:void(0)" class="back-btn" ng-if="canGoPreviousStep" ng-click="goPrevious()"><i class="material-icons">chevron_left</i></a>
+                        <a href="javascript:void(0)" class="back-btn" ng-if="canGoPreviousStep" ng-click="goPrevious()"><i
+                                class="material-icons">chevron_left</i></a>
                     </div>
                     <div class="col s10 p0 center-align">
                         <h5 style="margin-top:3px;">{{canGoPreviousStep?'Pickup Complete':'Enter Laundry Details'}}</h5>
@@ -100,34 +103,38 @@
             </div>
             <div class="modal-content">
                 <div ng-if="!canGoPreviousStep">
-                    <div class="row laundry-item-row" ng-repeat="laundry in laundrypricing | filter:filterByCategory">
-                        <div class="col s7 pl0 text-center">
-                            <a href="javascript:void(0)" class="item-title" ng-click="addItem(laundry.id)">{{laundry.title}}</a>
-                        </div>
-                        <div class="col s3 p0">
-                            <input type="text" readonly="readonly" value="{{laundry.items_count}}">
-                        </div>
-                        <div class="col s2 pr0 text-right">
-                            <a href="javascript:void(0)" class="item-remove" ng-click="removeItem(laundry.id)">
-                                <i class="material-icons">remove_circle_outline</i>
-                            </a>
+                    <div class="laundry-items">
+                        <div class="row laundry-item-row" ng-repeat="laundry in laundrypricing | filter:filterByCategory">
+                            <div class="col s7 pl0 text-center">
+                                <a href="javascript:void(0)" class="item-title" ng-click="addItem(laundry.id)">{{laundry.title}}</a>
+                            </div>
+                            <div class="col s3 p0">
+                                <input type="text" readonly="readonly" value="{{laundry.items_count}}">
+                            </div>
+                            <div class="col s2 pr0 text-right">
+                                <a href="javascript:void(0)" class="item-remove" ng-click="removeItem(laundry.id)">
+                                    <i class="material-icons">remove_circle_outline</i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                     <div class="laundry-footer">
-                        <div class="row">
+                        <div class="row status-bar" ng-if="(laundrypricing | filter:filterByItemsCount).length > 0">
                             <div class="col s8">
-                                <label class="tag" ng-repeat="laundry in laundrypricing | filter:filterByItemsCount">{{laundry.title}}<span class="item_count">{{laundry.items_count}}</span></label>
+                                <label class="tag" ng-repeat="laundry in laundrypricing | filter:filterByItemsCount">{{laundry.title}}<span
+                                        class="item_count">{{laundry.items_count}}</span></label>
                             </div>
-                            <div class="col s4 text-right" ng-if="(laundrypricing | filter:filterByItemsCount).length > 0">
-                                <button type="button" class="waves-effect waves-green btn-small" ng-click="goNext()">NEXT</button>
+                            <div class="col s4 text-right">
+                                <button type="button" class="waves-effect waves-green btn-small mt10" ng-click="goNext()">NEXT</button>
                             </div>
                         </div>
                         <section class="laundry-filter">
                             <div class="row m0">
-                                <div class="col s3 center-align" ng-class="{'active': filterIndex == $index}" ng-repeat="filter in filterOptions" ng-click="filterItems($index)">
+                                <div class="col s3 center-align" ng-class="{'active': filterIndex == $index}" ng-repeat="filter in filterOptions"
+                                    ng-click="filterItems($index)">
                                     <div class="font-bold">{{filter}}</div>
                                 </div>
-                                <div class="col s3 center-align" ng-class="{'active': filterIndex == -1}"  ng-click="filterItems(-1)">
+                                <div class="col s3 center-align" ng-class="{'active': filterIndex == -1}" ng-click="filterItems(-1)">
                                     <div class="font-bold">All</div>
                                 </div>
                             </div>
@@ -163,6 +170,81 @@
                         <button type="button" class="btn btn-primary" ng-click="">DONE</button>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Close Drop Modal Structure -->
+        <div id="CloseDropTaskModal" class="modal drop-task-modal modal-fixed-footer" ng-show="!loading">
+            <div class="modal-header">
+                <div class="row m0">
+                    <div class="col s12">
+                        <h5>Drop Complete <a href="javascript:void(0)" class="modal-close right"><i class="material-icons">close</i></a></h5>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-content">
+                <h5>Are you sure you want to charge to customer?</h5>
+                <div class="row" >
+                    <div class="col s12 items">
+                        <div class="items-container">
+                            <div class="item item-body orderlistbody">
+
+                                <div ng-show="task.order.same_day_pickup == 1 && (appoptions && appoptions.same_day_pickup_price)">
+                                    <i class="icon ion-ios-plus-outline"> </i> ${{appoptions.same_day_pickup_price}} - Today Pickup
+                                </div>
+            
+            
+                                <div ng-show="task.order.pickup_price && task.order.pickup_price != '0'">
+                                    <i class="icon ion-ios-plus-outline"> </i> ${{task.order.pickup_price}} - Fixed Time Pickup
+                                </div>
+            
+                            </div>
+            
+                            <div class="item item-body orderlistbody">
+                                <div ng-show="task.order.next_day_drop == 1 && (appoptions && appoptions.next_day_delivery_price)">
+                                    <i class="icon ion-ios-plus-outline"> </i> ${{appoptions.next_day_delivery_price}} - Next Day Delievery
+                                </div>
+            
+                                <div ng-show="task.order.drop_price && task.order.drop_price != '0'">
+                                    <i class="icon ion-ios-plus-outline"> </i> ${{task.order.drop_price}} - Fixed Time Delievery
+                                </div>
+                            </div>
+            
+                            <div class="item item-body orderlistbody">  
+                                <div ng-repeat="item in order_items">
+                                    <i class="icon ion-ios-plus-outline"> </i> ${{item.price}} - {{item.title}}
+                                </div>
+                            </div>
+                        </div>
+        
+                        <div class="item item-body orderlistbody result">  
+                            <div>
+                                <i class="icon ion-ios-plus-outline"> </i> ${{getTotalAmount()}} - <strong>Total</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer text-center">
+                
+
+                <form action="https://payment.architrade.com/cgi-ssl/ticket_auth.cgi" method="post">
+                    <input type="hidden" name="merchant" value="90246240" />
+                    <input type="hidden" name="ticket" value="{{vault_details.transact}}" />
+                    <input type="hidden" name="amount" value="{{getTotalAmount()}}" />
+                    <input type="hidden" name="currency" value="578" />
+                    <input type="hidden" name="orderid" value="{{task.order_id}}" />
+                    <input type="hidden" name="preauth" value="1" />
+                    <input type="hidden" name="test" value="1" />
+                    <input type="hidden" name="accepturl" value="http://localhost/easywashgo/#payment-success/task/{{task.id}}"/>
+                    <input type="hidden" name="declineurl" value="http://localhost/easywashgo/#payment-error/task/{{task.id}}" />
+
+                
+                    <button type="submit" class="btn btn-primary" ng-click="">YES</button>
+                    <button type="button" class="modal-close btn btn-default">NO</button>
+                </form>
+
+                
             </div>
         </div>
 
