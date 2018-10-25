@@ -11,45 +11,10 @@
     <!-- load ionic and self CDN -->
     <!-- <link rel="stylesheet" href="css/ionic.css" /> -->
     <!-- <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/ionic/1.3.2/css/ionic.css"> -->
-    <link href="css/materialize.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="css/materialize.css" rel="stylesheet">
     <link href="css/custom.css" rel="stylesheet">
-
-    <!-- load self css -->
-    <!-- <link rel="stylesheet" href="css/style.css" /> -->
-
-    <!-- jquery cdn link  -->
-    <script src="js/jquery-3.3.1.slim.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <!-- <script src="http://code.jquery.com/jquery-3.3.1.slim.min.js"></script> -->
-
-    <!-- load angular CDN -->
-    <script src="js/angular.min.js"></script>
-    <!-- <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script> -->
-
-    <!-- load angular route via CDN -->
-    <script src="js/angular-route.js"></script>
-    <!-- <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-route.js"></script> -->
-
-    <!-- Load angularjs.messsage.min.js -->
-    <script type="text/javascript" src="js/angular-messages.min.js"></script>
-
-    <!-- Load main app.js -->
-    <script src="js/app.js"></script>
-
-    <!-- load all controller in laundary app -->
-    <script src="js/controllers/all-controller.js"></script>
-
-    <!-- Bootstrap core JavaScript
-        ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-
-    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
-    <script src="../../assets/js/vendor/popper.min.js"></script>
-    <!-- <script src="js/bootstrap.min.js"></script> -->
-    <script src="js/materialize.min.js"></script>
-
 
     <style>
         html {
@@ -147,33 +112,25 @@
         </ul>
         <!-- menu ends here -->
     </div>
+
+
+
+     <!-- jquery libraries  -->
+     <script src="js/libraries/jquery.min.js"></script>
+     <script src="js/libraries/materialize.min.js"></script>
+ 
+     <!-- load angular libraries -->
+     <script src="js/libraries/angular.min.js"></script>
+     <script src="js/libraries/angular-route.js"></script>
+     <script type="text/javascript" src="js/libraries/angular-messages.min.js"></script>
+ 
+    <!-- Load main.js -->
+     <script src="js/custom/main.js"></script>
+
+     <!-- Load app.js -->
+     <script src="js/custom/app.js"></script>
+     <!-- load all controller in laundary app -->
+     <script src="js/custom/all-controller.js"></script>
 </body>
-
-
-<!-- Bootstrap core JavaScript
-    ================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-    crossorigin="anonymous"></script>
-<script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
-<script src="../../assets/js/vendor/popper.min.js"></script>
-<!-- <script src="js/bootstrap.min.js"></script> -->
-<script src="js/materialize.min.js"></script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        var elems = document.querySelectorAll(".sidenav");
-        var instances = M.Sidenav.init(elems, options);
-    });
-
-    // Initialize collapsible (uncomment the lines below if you use the dropdown variation)
-    // var collapsibleElem = document.querySelector(".collapsible");
-    // var collapsibleInstance = M.Collapsible.init(collapsibleElem, options);
-
-    // Or with jQuery
-
-    $(document).ready(function () {
-        $(".sidenav").sidenav();
-    });
-</script>
 
 </html>
