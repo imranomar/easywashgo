@@ -3,6 +3,23 @@ var app = angular.module("laundryApp", ["ngRoute"]);
 app.run(function($rootScope, updateFCMToken) {
   $rootScope.a = "​http://localhost/advanced/backend/web/";
 
+  /* Constants */
+  $rootScope.Constant = {
+    "TASK_TYPE": {
+      "PICKUP_TASK": 1,
+      "DROP_TASK": 2,
+    },
+    "TASK_STATUS": {
+      "OPEN": 0,
+      "CLOSE": 1,
+    },
+    "ORDER_STATUS": {
+      "ORDERED": 0,
+      "PICKED_UP": 1,
+      "DROPPED": 2
+    }
+  };
+
   if (localStorage.getItem("laundryUser")) {
     updateFCMToken.test();
   }

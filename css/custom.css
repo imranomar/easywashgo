@@ -234,6 +234,11 @@ textarea.materialize-textarea {
   margin-bottom: 5px !important;
 }
 
+.mb10 {
+  margin-bottom: 10px !important;
+}
+
+
 /* Padding Classes */
 .p0 {
   padding: 0 !important;
@@ -449,10 +454,13 @@ tr {
 
 /* Laundry Item Modal */
 .laundry-items{
-  max-height: 210px;
+  max-height: 70%;
   overflow-x: hidden;
   overflow-y: auto;
   padding: 15px;
+  position: absolute;
+  left: 0;
+  top: 0;
 }
 
 .laundry-item-row .item-title {
@@ -531,31 +539,29 @@ tr {
 
 .drop-task-modal .modal-content h5
 {
-  padding: 20px;
+  padding: 10px 15px;
   border-bottom: 1px solid #ccc;
   font-size: 20px;
 }
 
 .drop-task-modal .modal-content{
   padding: 0 !important;
+  padding-bottom: 0px !important;
+  height: calc(100% - 106px) !important;
 }
 
 .drop-task-modal .items {
   padding: 10px 20px !important;
 }
 
-.drop-task-modal .items .item {
-  padding-bottom: 10px;
-}
 
-.items .item.result {
+.drop-task-modal .total {
+  font-weight: bold;
   border-top: 1px solid #ccc;
   padding-top: 10px;
 }
-
-.drop-task-modal .items .items-container{
-  max-height: 200px;
-  overflow-y: auto;
+.drop-task-modal .items tr>td:first-child {
+  font-weight: bold;
 }
 
 .drop-task-modal {

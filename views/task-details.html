@@ -9,13 +9,12 @@
     </style>
 <div ng-controller="TaskDetailsCtrl">
     <!-- wizard one start -->
-
     <div class="container" style="padding-bottom:50px;">
         <div class="row page-title-row">
             <div class="col s9 page-title-row-col">
                 <div class='left-align'>
 
-                    <h5>{{task.type == 1?'Pick Up': 'Drop'}} Task Details</h5>
+                    <h5>{{task.type == Constant.TASK_TYPE.PICKUP_TASK?'Pick Up': 'Drop'}} Task Details</h5>
                     Order Id - {{task.order_id}}
                 </div>
             </div>
@@ -38,7 +37,7 @@
         <div class=' row my_button z-depth-4' style='    
         border-radius: 10px;
         padding: 10px;'>
-            <div class="col s12" style='padding: 5px' ng-if="task.type == 1">
+            <div class="col s12" style='padding: 5px' ng-if="task.type == Constant.TASK_TYPE.PICKUP_TASK">
                 <h5 style='margin-bottom: 10px;' ng-if="task.order.pickup_at_door == 0">Pick Up Time:
                     {{task.order.pickup_time_from}} - {{task.order.pickup_time_to}}</h5>
                 <h5 style='margin-bottom: 10px;' ng-if="task.order.pickup_at_door == 1">Pick up at Door</h5>
@@ -47,7 +46,7 @@
                 <h5 style='margin-bottom: 10px;'>Drop Time: {{task.drop_time_from}} - {{task.drop_time_to}}</h5>
                 <h5 style='margin-bottom: 10px;'>Drop at Door: {{task.drop_at_door}}</h5> -->
             </div>
-            <div class="col s12" style='padding: 5px' ng-if="task.type == 2">
+            <div class="col s12" style='padding: 5px' ng-if="task.type == Constant.TASK_TYPE.DROP_TASK">
                 <h5 style='margin-bottom: 10px;' ng-if="task.order.drop_at_door == 0">Drop Time:
                     {{task.order.drop_time_from}} - {{task.order.drop_time_to}}</h5>
                 <h5 style='margin-bottom: 10px;' ng-if="task.order.drop_at_door == 1">Drop at Door</h5>
@@ -80,9 +79,9 @@
 
         <div class="row my_button text-center">
             <!-- Modal Trigger -->
-            <button data-target="ClosePickupTaskModal" class="btn modal-trigger" ng-if="task.type == '1' && task.order.status == 0">Close Pickup
+            <button data-target="ClosePickupTaskModal" class="btn modal-trigger" ng-if="task.type == Constant.TASK_TYPE.PICKUP_TASK && task.order.status == Constant.ORDER_STATUS.ORDERED">Close Pickup
                 Task</button>
-            <button ng-click="openModal('CloseDropTaskModal')" class="btn modal-trigger" ng-if="task.type == '2' && task.order.status == 1">Close Drop Task</button>
+            <button ng-click="openModal('CloseDropTaskModal')" class="btn modal-trigger" ng-if="task.type == Constant.TASK_TYPE.DROP_TASK && task.order.status == Constant.ORDER_STATUS.PICKED_UP">Close Drop Task</button>
         </div>
 
         <!-- Close Pickup Modal Structure -->
@@ -102,7 +101,7 @@
                 </div>
             </div>
             <div class="modal-content">
-                <div ng-if="!loading && task.type == '1'">
+                <div ng-if="!loading && task.type == Constant.TASK_TYPE.PICKUP_TASK">
                     <div ng-if="!canGoPreviousStep">
                         <div class="laundry-items">
                             <div class="row laundry-item-row" ng-repeat="laundry in laundrypricing | filter:filterByCategory">
@@ -185,54 +184,63 @@
                 </div>
             </div>
             <div ng-show="!paymentSubmitted">
-                <div class="modal-content" ng-if="!loading && task.type == '2'">
+                <div class="modal-content" ng-if="!loading && task.type == Constant.TASK_TYPE.DROP_TASK">
                     <h5>Are you sure you want to charge to customer?</h5>
                     <div class="row">
                         <div class="col s12 items">
                             <div class="items-container">
-                                <div class="item item-body orderlistbody">
+                                <table class="table mb10">
+                                    <tr ng-show="task.order.same_day_pickup == 1 && (appoptions && appoptions.same_day_pickup_price)">
+                                        <td colspan="2" class="text-left">Today Pickup</td>
+                                        <td class="text-right">+ ${{appoptions.same_day_pickup_price}}</td>
+                                    </tr>
+                                    <tr ng-show="task.order.pickup_price && task.order.pickup_price != '0'">
+                                        <td colspan="2" class="text-left">Fixed Time Pickup</td>
+                                        <td class="text-right">+ ${{appoptions.same_day_pickup_price}}</td>
+                                    </tr>
 
-                                    <div ng-show="task.order.same_day_pickup == 1 && (appoptions && appoptions.same_day_pickup_price)">
-                                        <i class="icon ion-ios-plus-outline"> </i> ${{appoptions.same_day_pickup_price}} -
-                                        Today Pickup
-                                    </div>
+                                    <tr ng-show="task.order.next_day_drop == 1 && (appoptions && appoptions.next_day_delivery_price)">
+                                        <td colspan="2" class="text-left">Next Day Delievery</td>
+                                        <td class="text-right">+ ${{appoptions.next_day_delivery_price}}</td>
+                                    </tr>
 
+                                    <tr ng-show="task.order.drop_price && task.order.drop_price != '0'">
+                                        <td colspan="2" class="text-left">Fixed Time Delievery</td>
+                                        <td class="text-right">+ ${{task.order.drop_price}}</td>
+                                    </tr>
+                                </table>
 
-                                    <div ng-show="task.order.pickup_price && task.order.pickup_price != '0'">
-                                        <i class="icon ion-ios-plus-outline"> </i> ${{task.order.pickup_price}} - Fixed
-                                        Time Pickup
-                                    </div>
+                                <table class="table items">
+                                    <tr ng-repeat="item in order_items">
+                                        <td class="text-left">{{item.title}}</td>
+                                        <td>{{item.quantity}}</td>
+                                        <td class="text-right">+ ${{item.price}}</td>
+                                    </tr>
+                                </table>
+                                <table class="table total items mt10">
+                                    <tr>
+                                        <td class="text-left">Total</td>
+                                        <td></td>
+                                        <td class="text-right">${{getTotalAmount()}}</td>
+                                    </tr>
+                                </table>
 
-                                </div>
-
-                                <div class="item item-body orderlistbody">
-                                    <div ng-show="task.order.next_day_drop == 1 && (appoptions && appoptions.next_day_delivery_price)">
-                                        <i class="icon ion-ios-plus-outline"> </i> ${{appoptions.next_day_delivery_price}}
-                                        - Next Day Delievery
-                                    </div>
-
-                                    <div ng-show="task.order.drop_price && task.order.drop_price != '0'">
-                                        <i class="icon ion-ios-plus-outline"> </i> ${{task.order.drop_price}} - Fixed Time
-                                        Delievery
-                                    </div>
-                                </div>
-
-                                <div class="item item-body orderlistbody">
+                                <!-- <div class="item item-body orderlistbody">
                                     <div ng-repeat="item in order_items">
-                                        <i class="icon ion-ios-plus-outline"> </i> ${{item.price}} - {{item.title}}
+                                        <i class="icon ion-ios-plus-outline"> </i> ${{item.price}} - {{item.quantity}} {{item.title}}
                                     </div>
-                                </div>
+                                </div> -->
                             </div>
 
-                            <div class="item item-body orderlistbody result">
+                            <!-- <div class="item item-body orderlistbody result">
                                 <div>
                                     <i class="icon ion-ios-plus-outline"> </i> ${{getTotalAmount()}} - <strong>Total</strong>
                                 </div>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer text-center" ng-if="!loading && task.type == '2'">
+                <div class="modal-footer text-center" ng-if="!loading && task.type == Constant.TASK_TYPE.DROP_TASK">
                     <!-- <form action="https://payment.architrade.com/cgi-ssl/ticket_auth.cgi" method="post">
                         <input type="hidden" name="merchant" value="90246240" />
                         <input type="hidden" name="ticket" value="{{vault_details.transact}}" />

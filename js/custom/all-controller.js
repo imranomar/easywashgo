@@ -696,6 +696,7 @@ app.controller("DeliverydateCtrl", function($scope) {
 
 app.controller("TaskDetailsCtrl", function(
   $scope,
+  $rootScope,
   $routeParams,
   $http,
   appInfo,
@@ -729,23 +730,6 @@ app.controller("TaskDetailsCtrl", function(
   $scope.filterOptions = ["Upper Body", "Lower Body", "Non Wearable"];
 
   $scope.canGoPreviousStep = false;
-  
-  getVault();
-  
-  //get Vault details
-  function getVault() {
-    $http
-      .get(appInfo.url + "customersapi/view/?id=" + $scope.customer_id + "&expand=vault")
-      .then(function(res) {
-        var vaults = res.data.vault;
-        if(vaults && vaults.length > 0) {
-          $scope.vault_details = vaults[vaults.length-1];
-        }
-      })
-      .catch(function(err) {
-        console.log(err);
-      });
-  }
 
   //get task details
   $http
@@ -753,16 +737,16 @@ app.controller("TaskDetailsCtrl", function(
       appInfo.url +
         "tasksapi/view/?id=" +
         task_id +
-        "&expand=order,address,customer"
+        "&expand=order,address,customer,vault"
     )
     .then(function(res) {
       console.log(res.data);
       $scope.task = res.data;
+      $scope.vault_details = $scope.task.vault;
 
       //not picked get laundry pricing to close
       if ($scope.task.order && $scope.task.order.status != 2)
       {
-
         if($scope.task.type &&  $scope.task.type == 1)
         {
           $http
@@ -902,11 +886,12 @@ app.controller("TaskDetailsCtrl", function(
 
       var selectedLaundryItems = $scope.laundrypricing.filter(function(item){
         return item.items_count > 0;
-      }).map(function(item){
+      }).map(function(item) {
         var order_item = {};
         order_item.order_id = $scope.task.order_id;
         order_item.title = item.title;
         order_item.type = item.type;
+        order_item.quantity = item.items_count;
         order_item.price = item.items_count * parseFloat(item.price);
 
         return order_item;
@@ -935,7 +920,7 @@ app.controller("TaskDetailsCtrl", function(
             order.pickup_close_id = $scope.closetaskdetails.id;
             order.pickup_close_other_id = $scope.closetaskdetails.other_id;
             order.pickup_close_comments = $scope.closetaskdetails.comments;
-            order.status = 1;
+            order.status = $rootScope.Constant.ORDER_STATUS.PICKED_UP;
 
             let req = {
               method: "PUT",
@@ -950,9 +935,11 @@ app.controller("TaskDetailsCtrl", function(
               .then(function(res) {
                   $scope.popupLoading = false;
                   console.log(res.data);
-                  $scope.task.order.status = 1;
-                  $('.modal-close').trigger('click');
-                  alert("Pickup closed successfully");
+                  
+                  $scope.changeTaskStatus();
+
+                  // $('.modal-close').trigger('click');
+                  // alert("Pickup closed successfully");
               }).catch(function(error) {
                 console.log(error);
                 alert("Error while closing pickup");
@@ -971,46 +958,106 @@ app.controller("TaskDetailsCtrl", function(
         });
     }
 
+    $scope.changeTaskStatus = function() {
+      var task = {};
+      task.id = $scope.task.id;
+      task.order_id = $scope.task.order_id;
+      task.type = $scope.task.type;
+      task.at = $scope.closetaskdetails.at;
+      task.status = $rootScope.Constant.TASK_STATUS.CLOSE;
+      
+      let req = {
+        method: "PUT",
+        url: appInfo.url + "tasksapi/update/?id="+ $scope.task.id,
+        data: $httpParamSerializer(task),
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        }
+      };
+
+      $http(req)
+      .then(function(res) {
+          $scope.popupLoading = false;
+          console.log(res.data);
+        
+          alert("Pickup closed successfully");
+          $location.path("/dashboard");
+      }).catch(function(error) {
+        console.log(error);
+        alert("Error while closing pickup");
+        $scope.popupLoading = false;
+      });
+    }
+
     $scope.openModal = function(modalId) {
       $scope.paymentSubmitted = false;
       $('#'+modalId).modal('open');
     }
 
-    $scope.getTotalAmount = function()
+    $scope.getTotalAmount = function(orderText)
     {
       var totalAmount = 0;
+      var order_text = '';
+      var amount = 0
 
       if($scope.task.order.same_day_pickup == 1 && ($scope.appoptions && $scope.appoptions.same_day_pickup_price))
       {
-        totalAmount += parseFloat($scope.appoptions.same_day_pickup_price);
+        amount = parseFloat($scope.appoptions.same_day_pickup_price);
+        totalAmount += amount;
+        order_text += 'Same Day Pickup: ' + amount; 
       }
 
       if($scope.task.order.pickup_price && $scope.task.order.pickup_price != '0')
       {
-        totalAmount += parseFloat($scope.task.order.pickup_price);
+        amount = parseFloat($scope.task.order.pickup_price);
+        totalAmount += amount;
+
+        order_text += (order_text == ''?'': ', ') + 'Fixed time pickup: ' + amount;
       }
 
       if($scope.task.order.next_day_drop == 1 && ($scope.appoptions && $scope.appoptions.next_day_delivery_price))
       {
-        totalAmount += parseFloat($scope.appoptions.next_day_delivery_price);
+        amount = parseFloat($scope.appoptions.next_day_delivery_price);
+        totalAmount += amount;
+
+        order_text += (order_text == ''?'': ', ') + 'Next day delivery: ' + amount;
       }
 
       if($scope.task.order.drop_price && $scope.task.order.drop_price)
       {
-        totalAmount += parseFloat($scope.task.order.drop_price);
+        amount = parseFloat($scope.task.order.drop_price);
+        totalAmount += amount;
+
+        order_text += (order_text == ''?'': ', ') + 'Fixed time delivery: ' + amount;
       }
 
+      order_text += order_text == ''?'': ' | ';
+
+      order_text += 'Items: ';
+      
       angular.forEach($scope.order_items, function(value, key)
       {
         totalAmount += parseFloat(value.price);
+        order_text += (key == 0?"":", ") + value.quantity + "-" + value.title;
       });
-      return totalAmount
+
+      order_text += order_text == ''?'': ' | ';
+      
+      order_text += "Total: " + totalAmount;
+
+      if(orderText && orderText == true)
+        return order_text;
+      else
+        return totalAmount
     }
 
     $scope.paymentSubmitted = false;
     $scope.makePayment = function() 
     {
       $scope.paymentSubmitted = true;
+      $scope.task.order.status = 2;
+      var total_amount = $scope.getTotalAmount();
+      var order_text = $scope.getTotalAmount(true);
 
       var doc = document.getElementById("paymentForm").contentWindow.document;
 
@@ -1022,18 +1069,19 @@ app.controller("TaskDetailsCtrl", function(
       html += '<form action="https://payment.architrade.com/cgi-ssl/ticket_auth.cgi" method="post">';
       html += '<input type="hidden" name="merchant" value="90246240" />';
       html += '<input type="hidden" name="ticket" value="'+ $scope.vault_details.transact + '" />';
-      html += '<input type="hidden" name="amount" value="'+ $scope.getTotalAmount()+ '" />';
+      html += '<input type="hidden" name="amount" value="'+ total_amount + '" />';
       html += '<input type="hidden" name="currency" value="578" />';
       html += '<input type="hidden" name="orderid" value="'+ $scope.task.order_id +'" />';
       html += '<input type="hidden" name="preauth" value="1" />';
       html += '<input type="hidden" name="test" value="1" />';
+      html += '<input type="hidden" name="ordertext" value="'+ order_text +'" />';
       html += '<input type="hidden" name="accepturl" value="http://localhost/advanced/backend/web/order/paymentcallback" />';
       html += '<input type="hidden" name="declineurl" value="http://localhost/advanced/backend/web/order/paymentcallback" />';
       html += '<INPUT type="submit" id="submit" name="submit" style="visibility:hidden"  value="TICKET DEMO"> ';
       html += '</form>';
       html += '<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>';
       html += '<script>$("#submit").click();</script>';
-
+      console.log(html);
       doc.open();
       doc.write(html);
       doc.close();
