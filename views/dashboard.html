@@ -1,29 +1,20 @@
-<script type="text/javascript">
-	$(document).ready(function () {
-
-		$("#close").click(function () {
-			$("#div2").removeClass("abcd");
-			$("#div1").removeClass("animationhide");
-			$("#div2").addClass("Menu");
-		})
-
-		$("#menuopen").click(function () {
-			$("#div1").addClass("animationhide");
-			$("#div2").addClass("abcd");
-		});
-		// $("#signout").click(function($scope,$window){
-
-		// 	 localStorage.removeItem("laundryUser");
-		//      $location.path("/login");
-		// });
-
-	});
-</script>
-
 <div ng-controller="DashboardCtrl" class="dashboard">
 	<main>
+		<div class="header-section">
+			<div class="row m0 center">
+				<div class="col s2">
+					<a href="javascript:void(0)" ng-click="showPreviousDayTask()" class="nav-icon"><i class="material-icons">keyboard_arrow_left</i></a>
+				</div>
+				<div class="col s8">
+					<div class="font-bold title"> <span class="d-inline-block v-top">{{date | TaskHeading}}</span> <a href="javascript:void(0)" class="today" ng-click="goToTaday()" ng-if="(date | date: 'yyyy-MM-dd') != (currentDate | date: 'yyyy-MM-dd')"><i class="material-icons">date_range</i></a></div>
+				</div>
+				<div class="col s2">
+					<a href="javascript:void(0)" ng-click="showNextDayTask()" class="nav-icon"><i class="material-icons">keyboard_arrow_right</i></a>
+				</div>
+			</div>
+		</div>
 		<div class="container">
-			<div class="row" ng-repeat="task in tasks_list" ng-if="tasks_list.length > 0">
+			<div class="row" ng-repeat="task in filtered_tasks_list" ng-if="tasks_list.length > 0">
 				<div class="col s12">
 					<a class="hidden_a" href="#/task-details/{{task.id}}">
 						<div class="row z-depth-4 module-item" ng-switch="task.type">
@@ -89,7 +80,7 @@
 					</a>
 				</div>
 			</div>
-			<div class="row" ng-if="!tasks_list || tasks_list.length == 0">
+			<div class="row" ng-if="!filtered_tasks_list || filtered_tasks_list.length == 0">
 				<div class="col s12 center">
 					<strong>No Tasks Found.</strong>
 				</div>

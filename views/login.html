@@ -1,8 +1,6 @@
+<style>
 
-
- <style>
-
-    html {
+	html {
         font-size: 4.5vw;
         background-image: none !important;
     }
@@ -11,83 +9,42 @@
         font-size: 4.5vw !important;
         font-family:'roboto';
     }
-    
-		</style>
-		
+</style>
 
-		
-		<table cellpadding=0 cellspacing=0 style='width:100%; height: 100%'>
-				<tr>
-						<td valign='middle' align='center'>
-								<div ng-controller="LoginCtrl" class="signinpage">
-								<form ng-submit="loginsubmit()" novalidate="novalidate" formnovalidate >
-										<div class="wrapper_login" style='margin-top: auto; margin-bottom: auto; text-align:center'>
-														<div style='background-color:white;  width: 100%; text-align:center'>
-																
-																<img src="images/login_logo.png" style='width: 50%; ' alt="">
-																<input type="email" placeholder="Email"  ng-model="logindata.email" autofocus="" style='width:60%;margin-top: 2vw;' placeholder="Email" >
+<table cellpadding=0 cellspacing=0 style='width:100%; height: 100%'>
+	<tr>
+		<td valign='middle' align='center'>
+			<div ng-controller="LoginCtrl" class="signinpage">
+				<form id="LoginForm" ng-submit="!showLoading && loginsubmit()" autocomplete="off" ng-validate="validationOptions">
+					<div class="wrapper_login align-center">
+						<img src="images/login_logo.png" style='width: 50%; ' alt="">
+						<div class="msg msg-error" ng-if="err">Invalid username or password!!!</div>
+						<div class="row">
+							<div class="col offset-s2 s8">
+								<div class="form-field">
+									<input type="text" name="email" placeholder="Email" ng-model="logindata.email" autofocus="" />
+								</div>
 
-																<!-- <label class="item item-input item-floating-label logininput"> 
-																		<span class="input-label">Email</span>
-																		<!-- <input type="email" required="" autofocus="" class="logininputborder"> 
-																		<input type="email" placeholder="Email" ng-model="logindata.email" autofocus="" class="logininputborder">
-																	</label> -->
+								<div class="form-field">
+									<input type="password" name="password" ng-model="logindata.password" placeholder="Password" />								
+								</div>
 
-																<input type="password" style='width:60%;margin-top: 2vw;'  ng-model="logindata.password" autofocus=""   placeholder="Password" >
-																<!-- <label class="item item-input item-floating-label logininput">
-																		<span class="input-label">Password</span>
-																		<!-- <input type="password" required="" autofocus="" class="logininputborder"> 
-																		<input type="password" placeholder="Password" ng-model="logindata.password" autofocus="" class="logininputborder">
-																	</label> -->
-														</div> 
-														<p class="red" ng-show="err">Invalid username and password!!!</p>
-					 <p class="red" ng-show="required"> {{field}} !!!</p>
-														<!-- <input type="submit" name="" value="Login" class="selfloginbtn"> -->
-														<div ng-if="loading" class="loader">Loading...</div>
-														<button style='margin-top: 5vh; margin-bottom: 2vh;' class='btn btn-primary btn-pick-laundry '>Login</button>
-												 
-														<br/><a href="#"  style='margin-top: 5vw; ' >Forgot Password</a>
-													 
-														<br/>
-														<div id="status"></div>
-														<button data-scope="email" onclick="login()"  style='margin-top: 5vh; margin-bottom: 2vh; '  class='btn btn-primary btn-pick-laundry loginBtn loginBtn--facebook '>Facebook</button>
-														
-												</div>
-								</form> 
-							
+								<div class="form-field">
+									<a>Forgot Password</a>
+								</div>
+
+								<div class="form-field">
+									<button class='btn btn-primary btn-pick-laundry'>Login</button>
+								</div>
+
+								<div class="form-field">
+									<button data-scope="email" onclick="login()" class='btn btn-primary btn-pick-laundry loginBtn loginBtn--facebook'>Login with Facebook</button>
+								</div>
 							</div>
-						</td>
-				</tr>
-		</table>
-		 	
-
-	 
-			<!-- <div class="col col1 mar-top">
-
-			<label class="container">
-				<input type="checkbox" checked="checked" class="rememberMeCheck" ng-model="checkbox" id="check">
-				<span class="checkmark1"></span>
-				<label for="check">Remember me</label>
-			</label>
-
-		</div>
-		<div class="col linklogin">
-			<a href="#/forget" class="linklogin11">
-				Forget Password
-			</a>	
-		</div>	
-	
-
-
-	<div class="row link">
-
-		<div class="col linklogin">
-			Create An Account
-			<a href="#/signup" class="linklogin1">
-				Sign Up
-			</a>
-	     </div>	
-
-	</div> -->
-	
-	
+						</div>
+					</div>
+				</form>
+			</div>
+		</td>
+	</tr>
+</table>

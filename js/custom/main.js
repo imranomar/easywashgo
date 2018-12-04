@@ -1,9 +1,11 @@
-var baseUrl = "http://localhost/advanced/backend/web/";
+const baseUrl = 'http://localhost/advanced/backend/web/';
+//var baseUrl = 'http://thisisbig.ae/advanced/backend/web/';
+
 
 window.addEventListener("beforeunload", function(e) {
   if (!localStorage.getItem("rememberMe")) {
     let date1 = new Date().toUTCString();
-    document.cookie = "laundryCookie=y; expires=" + date1;
+    document.cookie = "laundryCookie=y; path= /; expires=" + date1;
   }
 });
 

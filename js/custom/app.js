@@ -1,40 +1,132 @@
-var app = angular.module("laundryApp", ["ngRoute"]);
+var app = angular.module("laundryApp", ["ngStorage", "ngRoute", "ngValidate"]);
 
-app.run(function($rootScope, updateFCMToken) {
-  $rootScope.a = "​http://localhost/advanced/backend/web/";
+app.run(function($rootScope, AppService) {
+  AppService.initialize();
 
   /* Constants */
   $rootScope.Constant = {
-    "TASK_TYPE": {
-      "PICKUP_TASK": 1,
-      "DROP_TASK": 2,
+    TASK_TYPE: {
+      PICKUP_TASK: 1,
+      DROP_TASK: 2
     },
-    "TASK_STATUS": {
-      "OPEN": 0,
-      "CLOSE": 1,
+    TASK_STATUS: {
+      OPEN: 0,
+      CLOSE: 1
     },
-    "ORDER_STATUS": {
-      "ORDERED": 0,
-      "PICKED_UP": 1,
-      "DROPPED": 2
+    ORDER_STATUS: {
+      ORDERED: 0,
+      PICKED_UP: 1,
+      DROPPED: 2
+    },
+    CARD_TYPES: {
+      MC: "Master Card",
+      VISA: "VISA Card",
+      DK: "Dankort Card",
+      "V-DK": "VISA/Dankort Card",
+      ELEC: "VISA Electron Card"
     }
   };
 
-  if (localStorage.getItem("laundryUser")) {
-    updateFCMToken.test();
-  }
-
-  $rootScope.showBackBtn = false;
   $rootScope.$on("$routeChangeStart", function(event, currRoute, prevRoute) {
     var currentRouteDetails = currRoute.$$route;
-    var showBackBtn = currentRouteDetails.showBackBtn == true? true: false;
+    var showBackBtn =
+      currentRouteDetails && currentRouteDetails.showBackBtn == true
+        ? true
+        : false;
+    var hideNavBar =
+      currentRouteDetails && currentRouteDetails.hideNavBar == true
+        ? true
+        : false;
 
     if (showBackBtn && showBackBtn == true) {
       $rootScope.showBackBtn = true;
     } else {
       $rootScope.showBackBtn = false;
     }
+
+    if (hideNavBar && hideNavBar == true) {
+      $rootScope.hideNavBar = true;
+    } else {
+      $rootScope.hideNavBar = false;
+    }
   });
+});
+
+app.factory("AppService", function($rootScope /*, FCMService*/) {
+  return {
+    initialize: function() {
+      document.addEventListener(
+        "deviceready",
+        function() {
+          FCMService.generateToken();
+        },
+        false
+      );
+    }
+  };
+});
+
+app.factory("CommonService", function(
+  $http,
+  $q,
+  $httpParamSerializer,
+  appInfo
+) {
+  var LOCALSTORAGE_USER = "laundryUser";
+  var LOCALSTORAGE_REMEMBER_ME = "rememberMe";
+
+  return {
+    storeUserDetailsLocal: function(data, isChecked) {
+      localStorage.setItem(LOCALSTORAGE_USER, data);
+
+      var date = new Date();
+      var date1 = "";
+
+      if (isChecked == true) {
+        localStorage.setItem(LOCALSTORAGE_REMEMBER_ME, "y");
+        date1 = new Date(date.setDate(date.getDate() + 10)).toUTCString();
+      } else {
+        localStorage.removeItem(LOCALSTORAGE_REMEMBER_ME);
+        date1 = new Date(date.setHours(date.getHours() + 1)).toUTCString();
+      }
+      document.cookie = "laundryCookie=y; path= /; expires=" + date1;
+    },
+    removeUserDetailsLocal: function() {
+      document.cookie = "laundryCookie=y; path= /; expires=expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+      localStorage.removeItem(LOCALSTORAGE_USER);
+      localStorage.removeItem(LOCALSTORAGE_REMEMBER_ME);
+    },
+    CallAjaxUsingPostRequest: function(partialUrl, dataObject) {
+      var defer = $q.defer();
+      $http({
+        method: "POST",
+        url: appInfo.url + partialUrl,
+        data: $httpParamSerializer(dataObject),
+        headers: { "Content-Type": "application/x-www-form-urlencoded" }
+      })
+        .success(function(data, status, header, config) {
+          defer.resolve(data);
+        })
+        .error(function(data, status, header, config) {
+          defer.reject(status);
+        });
+      return defer.promise;
+    },
+    CallAjaxUsingGetRequest: function(partialUrl) {
+      var defer = $q.defer();
+      $http({
+        method: "GET",
+        url: appInfo.url + partialUrl
+      })
+        .success(function(data, status, header, config) {
+          defer.resolve(data);
+        })
+        .error(function(data, status, header, config) {
+          defer.reject(status);
+        });
+      return defer.promise;
+    }
+  };
 });
 
 app.config(function($routeProvider, $locationProvider) {
@@ -58,17 +150,8 @@ app.config(function($routeProvider, $locationProvider) {
             $location.path("/dashboard");
           }
         }
-      }
-    })
-    .when("/signup", {
-      templateUrl: "views/signup.html",
-      resolve: {
-        check: function($location) {
-          if (getCookie(cookieName) == "y") {
-            $location.path("/dashboard");
-          }
-        }
-      }
+      },
+      hideNavBar: true
     })
     .when("/forget", {
       templateUrl: "views/forget.html",
@@ -78,20 +161,11 @@ app.config(function($routeProvider, $locationProvider) {
             $location.path("/dashboard");
           }
         }
-      }
+      },
+      hideNavBar: true
     })
     .when("/dashboard", {
       templateUrl: "views/dashboard.html",
-      resolve: {
-        check: function($location) {
-          if (!getCookie(cookieName)) {
-            $location.path("/login");
-          }
-        }
-      }
-    })
-    .when("/menu", {
-      templateUrl: "views/menu.html",
       resolve: {
         check: function($location) {
           if (!getCookie(cookieName)) {
@@ -130,16 +204,6 @@ app.config(function($routeProvider, $locationProvider) {
         }
       }
     })
-    .when("/mydetails", {
-      templateUrl: "views/mydetails.html",
-      resolve: {
-        check: function($location) {
-          if (!getCookie(cookieName)) {
-            $location.path("/login");
-          }
-        }
-      }
-    })
     .when("/notification", {
       templateUrl: "views/notifications.html",
       resolve: {
@@ -150,48 +214,8 @@ app.config(function($routeProvider, $locationProvider) {
         }
       }
     })
-    .when("/address", {
-      templateUrl: "views/addresses.html",
-      resolve: {
-        check: function($location) {
-          if (!getCookie(cookieName)) {
-            $location.path("/login");
-          }
-        }
-      }
-    })
     .when("/deliverydate", {
       templateUrl: "views/deliverydate.html",
-      resolve: {
-        check: function($location) {
-          if (!getCookie(cookieName)) {
-            $location.path("/login");
-          }
-        }
-      }
-    })
-    .when("/ordersummary", {
-      templateUrl: "views/ordersummary.html",
-      resolve: {
-        check: function($location) {
-          if (!getCookie(cookieName)) {
-            $location.path("/login");
-          }
-        }
-      }
-    })
-    .when("/payment", {
-      templateUrl: "views/paymentmethod.html",
-      resolve: {
-        check: function($location) {
-          if (!getCookie(cookieName)) {
-            $location.path("/login");
-          }
-        }
-      }
-    })
-    .when("/finaldate", {
-      templateUrl: "views/selecttimefinal.html",
       resolve: {
         check: function($location) {
           if (!getCookie(cookieName)) {
@@ -213,56 +237,6 @@ app.config(function($routeProvider, $locationProvider) {
     })
     .when("/order-details/:id", {
       templateUrl: "views/order-details.html",
-      resolve: {
-        check: function($location) {
-          if (!getCookie(cookieName)) {
-            $location.path("/login");
-          }
-        }
-      }
-    })
-    .when("/myedit/:person", {
-      templateUrl: "views/myedit.html",
-      resolve: {
-        check: function($location) {
-          if (!getCookie(cookieName)) {
-            $location.path("/login");
-          }
-        }
-      }
-    })
-    .when("/edit-address/:id", {
-      templateUrl: "views/edit-address.html",
-      resolve: {
-        check: function($location) {
-          if (!getCookie(cookieName)) {
-            $location.path("/login");
-          }
-        }
-      }
-    })
-    .when("/edit-payment/:id", {
-      templateUrl: "views/edit-payment.html",
-      resolve: {
-        check: function($location) {
-          if (!getCookie(cookieName)) {
-            $location.path("/login");
-          }
-        }
-      }
-    })
-    .when("/add-address", {
-      templateUrl: "views/add-address.html",
-      resolve: {
-        check: function($location) {
-          if (!getCookie(cookieName)) {
-            $location.path("/login");
-          }
-        }
-      }
-    })
-    .when("/add-payment", {
-      templateUrl: "views/add-payment.html",
       resolve: {
         check: function($location) {
           if (!getCookie(cookieName)) {
@@ -299,47 +273,10 @@ app.config(function($routeProvider, $locationProvider) {
   $locationProvider.html5Mode(false);
 });
 
-// route for the about page
-// .when('/about/:person', {
-//     templateUrl : 'pages/about.html',
-//     controller  : 'aboutController'
-// })
-
 // http://localhost/advanced/backend/web/
 app.factory("appInfo", function() {
   return {
-    url: "http://localhost/advanced/backend/web/"
-  };
-});
-
-app.factory("updateFCMToken", function(appInfo, $httpParamSerializer, $http) {
-  return {
-    test: function() {
-      if (!window.cordova) {
-        return;
-      }
-      FCMPlugin.getToken(function(token) {
-        let x = localStorage.getItem("laundryUser");
-        let data = {
-          token: token
-        };
-        let req = {
-          method: "PUT",
-          url: appInfo.url + "customersapi/update/?id=" + x,
-          data: $httpParamSerializer(data),
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-          }
-        };
-        $http(req)
-          .then(function(res) {
-            console.log(res);
-          })
-          .catch(function(error) {
-            console.log(error);
-          });
-      });
-    }
+    url: baseUrl
   };
 });
 
@@ -369,3 +306,32 @@ app.directive("itemFloatingLabel", function() {
     }
   };
 });
+
+app.filter('TaskHeading', function ($filter, $sce) {
+    return function (date) {
+      var text = "";
+
+      var newDate = new Date();
+      var currentDate = newDate.getDate();
+
+      var filterDate = date.getDate();
+      
+      if(filterDate == currentDate - 1) {
+        text = 'Yesterday';
+      } else if(filterDate == currentDate) {
+        text = 'Today ';
+      } else if (filterDate  == currentDate + 1) {
+        // if day is day after
+        text = 'Tomorrow';
+      // } else if (filterDate == currentDate + 2) {
+      //   // if day is day after
+      //   text = "Day After Tomorrow";
+      } else {
+        text = $filter('date')(date, 'EEEE');
+      }
+
+      text += ' - ' + $filter('date')(date, 'd MMM, yyyy');
+      
+      return $sce.trustAsHtml(text);
+    }
+ });
