@@ -5,8 +5,8 @@
 				<div class="col s2">
 					<a href="javascript:void(0)" ng-click="showPreviousDayTask()" class="nav-icon"><i class="material-icons">keyboard_arrow_left</i></a>
 				</div>
-				<div class="col s8">
-					<div class="font-bold title"> <span class="d-inline-block v-top">{{date | TaskHeading}}</span> <a href="javascript:void(0)" class="today" ng-click="goToTaday()" ng-if="(date | date: 'yyyy-MM-dd') != (currentDate | date: 'yyyy-MM-dd')"><i class="material-icons">date_range</i></a></div>
+				<div class="col s8 p0">
+					<div class="font-bold title"> <span class="d-inline-block v-middle">{{date | TaskHeading}}</span> <a href="javascript:void(0)" class="today" ng-click="goToTaday()" ng-if="(date | date: 'yyyy-MM-dd') != (currentDate | date: 'yyyy-MM-dd')"><i class="material-icons">date_range</i></a></div>
 				</div>
 				<div class="col s2">
 					<a href="javascript:void(0)" ng-click="showNextDayTask()" class="nav-icon"><i class="material-icons">keyboard_arrow_right</i></a>
@@ -22,58 +22,34 @@
 								<div class="col s3">
 									<div class="row">
 										<div class="col s12">
-											<img width="100%" src="images\{{task.order.pickup_time_from}}.png" />
-										</div>
-										<div class="col s12 center-align">
-											<span class="font-sm font-bold">{{task.order.pickup_time_from}} </span>
-											<span class="font-sm">TO</span>
-											<span class="font-sm font-bold">{{task.order.pickup_time_to}}</span>
+											<img width="100%" src="images\{{task.order.pickup_time_from}}.png" ng-if="task.order.pickup_at_door == 0" />
+											<img width="100%" src="images\no_time.jpg" ng-if="task.order.pickup_at_door == 1" />
 										</div>
 									</div>
 								</div>
 								<div class="col s9 p0">
-									<div class="row">
-										<div class="col s9">
-											<h6 class="mb5"><i class="material-icons font-bold valign-top">arrow_upward</i> PICKUP</h6>
-											<div class="box dotted-border border-2x p5">
-												<p class="m0">{{task.address.floor}} {{task.address.street_name}}</p>
-												<p class="m0">{{task.address.unit_number}} {{task.address.city_id}}</p>
-											</div>
-										</div>
-										<div class="col s3 right-align">
-											<div class="font-bold">{{task.order.drop_time_from}}</div>
-											<div class="font-bold">{{task.order.drop_time_to}}</div>
-										</div>
-									</div>
+									<h6 class="task-type">PICKUP <i class="material-icons font-bold valign-top">arrow_upward</i> </h6>
+									<h3 class="task-time" ng-if="task.order.pickup_at_door == 0">{{task.order.pickup_time_from < 10?'0':''}}{{task.order.pickup_time_from}}:00 - {{task.order.pickup_time_to < 10?'0':''}}{{task.order.pickup_time_to}}:00</h3>
+								</div>
+								<div class="col s12 order-address" ng-if="cityData.length > 0">
+									<p class="m0"><i class="material-icons font-bold valign-top">home</i> {{task.address.street_name}}, {{task.address.floor}}, {{displayCityName(task.address.city_id)}}</p>
 								</div>
 							</div>
 							<div ng-switch-when="2">
 								<div class="col s3">
 									<div class="row">
 										<div class="col s12">
-											<img width="100%" src="images\{{task.order.drop_time_from}}.png" />
-										</div>
-										<div class="col s12 center-align">
-											<span class="font-sm font-bold">{{task.order.drop_time_from}} </span>
-											<span class="font-sm">TO</span>
-											<span class="font-sm font-bold">{{task.order.drop_time_to}}</span>
+											<img width="100%" src="images\{{task.order.drop_time_from}}.png" ng-if="task.order.drop_at_door == 0" />
+											<img width="100%" src="images\no_time.jpg" ng-if="task.order.drop_at_door == 1" />
 										</div>
 									</div>
 								</div>
 								<div class="col s9 p0">
-									<div class="row">
-										<div class="col s9">
-											<h6 class="mb5"><i class="material-icons font-bold valign-top">arrow_downward</i> DROP</h6>
-											<div class="box dotted-border border-2x p5">
-												<p class="m0">{{task.address.floor}} {{task.address.street_name}}</p>
-												<p class="m0">{{task.address.unit_number}} {{task.address.city_id}}</p>
-											</div>
-										</div>
-										<div class="col s3 right-align">
-											<div class="font-bold">{{task.order.drop_time_from}}</div>
-											<div class="font-bold">{{task.order.drop_time_to}}</div>
-										</div>
-									</div>
+									<h6 class="task-type">DROP <i class="material-icons font-bold valign-top">arrow_downward</i></h6>
+									<h3 class="task-time" ng-if="task.order.drop_at_door == 0">{{task.order.drop_time_from < 10?'0':''}}{{task.order.drop_time_from}}:00 - {{task.order.drop_time_to < 10?'0':''}}{{task.order.drop_time_to}}:00</h3>
+								</div>
+								<div class="col s12 order-address" ng-if="cityData.length > 0">
+									<p class="m0"><i class="material-icons font-bold valign-top">home</i> {{task.address.street_name}}, {{task.address.floor}}, {{displayCityName(task.address.city_id)}}</p>
 								</div>
 							</div>
 						</div>

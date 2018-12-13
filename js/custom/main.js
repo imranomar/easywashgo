@@ -1,4 +1,4 @@
-const baseUrl = 'http://localhost/advanced/backend/web/';
+const baseUrl = 'http://eazywash.dk/advanced/backend/web/';
 //var baseUrl = 'http://thisisbig.ae/advanced/backend/web/';
 
 
@@ -8,6 +8,15 @@ window.addEventListener("beforeunload", function(e) {
     document.cookie = "laundryCookie=y; path= /; expires=" + date1;
   }
 });
+
+window.addEventListener('message', function(e) {
+  var data = e.data;
+  if(data.payment_success == true) {
+    $('.top_bar .app-logo').trigger('click');
+  } else if(data.payment_success == false) {
+    location.reload()
+  }
+}, false);
 
 //initialise and setup facebook js sdk
 window.fbAsyncInit = function() {

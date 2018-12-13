@@ -96,14 +96,24 @@ app.factory("CommonService", function(
       localStorage.removeItem(LOCALSTORAGE_USER);
       localStorage.removeItem(LOCALSTORAGE_REMEMBER_ME);
     },
-    CallAjaxUsingPostRequest: function(partialUrl, dataObject) {
+    CallAjaxUsingPostRequest: function(partialUrl, dataObject, isJson) {
       var defer = $q.defer();
-      $http({
+      
+      var request = {
         method: "POST",
-        url: appInfo.url + partialUrl,
-        data: $httpParamSerializer(dataObject),
-        headers: { "Content-Type": "application/x-www-form-urlencoded" }
-      })
+        url: appInfo.url + partialUrl
+      };
+      
+      if(isJson == true) {
+        request.data = dataObject;
+      } else {
+        request.data = $httpParamSerializer(dataObject),
+        request.headers = { 
+          "Content-Type": "application/x-www-form-urlencoded"
+        };
+      }
+
+      $http(request)
         .success(function(data, status, header, config) {
           defer.resolve(data);
         })
@@ -125,7 +135,32 @@ app.factory("CommonService", function(
           defer.reject(status);
         });
       return defer.promise;
+    },
+    GeneratePaymentForm: function(order_id, ticket, total_amount, order_text) {
+      var html = '';
+      html += '<style>html{ overflow: hidden; } </style>';
+      html += '<div class="payment-loader">';
+      html += '<h3 align="center"> Loading... </h3>';
+      html += '</div>';
+      html += '<form action="https://payment.architrade.com/cgi-ssl/ticket_auth.cgi" method="post">';
+      html += '<input type="hidden" name="merchant" value="90246240" />';
+      html += '<input type="hidden" name="ticket" value="'+ ticket + '" />';
+      html += '<input type="hidden" name="amount" value="'+ total_amount + '" />';
+      html += '<input type="hidden" name="currency" value="578" />';
+      html += '<input type="hidden" name="orderid" value="'+ order_id +'" />';
+      html += '<input type="hidden" name="preauth" value="1" />';
+      html += '<input type="hidden" name="test" value="1" />';
+      html += '<input type="hidden" name="ordertext" value="'+ order_text +'" />';
+      html += '<input type="hidden" name="accepturl" value="' + baseUrl + 'order/paymentcallback" />';
+      html += '<input type="hidden" name="declineurl" value="' + baseUrl + 'order/paymentcallback" />';
+      html += '<input type="submit" id="submit" name="submit" style="visibility:hidden" /> ';
+      html += '</form>';
+      html += '<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>';
+      html += '<script>$("#submit").click();</script>';
+
+      return html;
     }
+
   };
 });
 

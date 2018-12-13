@@ -1,102 +1,147 @@
 <!DOCTYPE html>
 
 <html lang="en" ng-app="laundryApp" ng-cloak>
-
-<head>
+  <head>
     <title>Laundary App</title>
 
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
 
-    <meta name="viewport" content="width=device-width,">
+    <meta name="viewport" content="width=device-width," />
     <!-- load ionic and self CDN -->
     <!-- <link rel="stylesheet" href="css/ionic.css" /> -->
-    <!-- <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/ionic/1.3.2/css/ionic.css"> -->
-    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="css/libraries/materialize.css" rel="stylesheet">
-    <link href="css/libraries/angular-wizard.min.css" rel="stylesheet">
-    <link href="css/custom/custom.css" rel="stylesheet">
+    <!--
+      <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/ionic/1.3.2/css/ionic.css">
+    -->
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <link href="css/libraries/materialize.css" rel="stylesheet" />
+    <link href="css/libraries/angular-wizard.min.css" rel="stylesheet" />
+    <link href="css/custom/custom.css" rel="stylesheet" />
 
     <style>
-        html {
-            font-size: 4.5vw;
-        }
+      html {
+        font-size: 4.5vw;
+      }
 
-        input {
-            font-size: 4.5vw !important;
-            font-family: 'roboto';
-        }
+      input {
+        font-size: 4.5vw !important;
+        font-family: "roboto";
+      }
     </style>
-</head>
+  </head>
 
-<body ng-controller="AppController">
+  <body ng-controller="AppController">
     <div class="navbar-fixed" ng-if="hideNavBar == false">
-        <div class="nav-wrapper">
-            <table class='top_bar' cellspcaing=0 cellpadding=0>
-                <tr>
-
-                    <td width='20%' valign='center' align='middle'><a href="javascript:void(0)"
-                            style='display:block;' data-target="slide-out" class="sidenav-trigger"><i style='font-size: 7vw'
-                                class="material-icons">dehaze</i></a></td>
-                    <td width='60%' valign='center' align='middle'><a href="javascript:void(0)" ng-click="goTo('/dashboard')"><img src="images/logo-top.png"
-                                style="height:7vw" alt=""></a></td>
-                    <td width="20%" valign="center" align="middle">
-                        <a href="javascript:void(0)" ng-if="!showBackBtn || showBackBtn == false">
-                            <i style="font-size: 7vw;" class="material-icons">local_phone</i>
-                        </a>
-                        <a href="javascript:window.history.back()" ng-if="showBackBtn == true">
-                            <i style="font-size: 10vw;" class="material-icons">chevron_left</i>
-                        </a>
-                    </td>
-
-                </tr>
-            </table>
-        </div>
-        <div class='curve'></div>
+      <div class="nav-wrapper">
+        <table class="top_bar" cellspcaing="0" cellpadding="0">
+          <tr>
+            <td width="20%" valign="center" align="middle">
+              <a
+                href="javascript:void(0)"
+                style="display:block;"
+                data-target="slide-out"
+                class="sidenav-trigger"
+                ><i style="font-size: 7vw" class="material-icons">dehaze</i></a
+              >
+            </td>
+            <td width="60%" valign="center" align="middle">
+              <a href="javascript:void(0)" class="app-logo" ng-click="goTo('/dashboard')"
+                ><img src="images/logo-top.png" style="height:7vw" alt=""
+              /></a>
+            </td>
+            <td width="20%" valign="center" align="middle">
+              <a
+                href="javascript:void(0)"
+                ng-if="!showBackBtn || showBackBtn == false"
+              >
+                <i style="font-size: 7vw;" class="material-icons"
+                  >local_phone</i
+                >
+              </a>
+              <a
+                href="javascript:window.history.back()"
+                ng-if="showBackBtn == true"
+              >
+                <i style="font-size: 10vw;" class="material-icons"
+                  >chevron_left</i
+                >
+              </a>
+            </td>
+          </tr>
+        </table>
+      </div>
+      <div class="curve"></div>
     </div>
     <ng-view></ng-view>
 
     <!-- menu starts here -->
     <div>
-        <ul id="slide-out" class="sidenav">
-            <li>
-                <div class="" style='text-align:center; margin-top: 20px; width: 100%'>
-                    <img class="" style='width:4em' src="images/logo.png">
-                </div>
-            </li>
+      <ul id="slide-out" class="sidenav">
+        <li>
+          <div
+            class=""
+            style="text-align:center; margin-top: 20px; width: 100%"
+          >
+            <img class="" style="width:4em" src="images/logo.png" />
+          </div>
+        </li>
 
-            <!-- <li><a href="#!">Second Link</a></li> -->
-            <li>
-                <div class="divider"></div>
-            </li>
-            <li><a href="javascript:void(0)" ng-click="goTo('/dashboard')"><i class="tiny material-icons">home</i>Home</a></li>
-            <li>
-                <div class="divider"></div>
-            </li>
-            <li><a href="javascript:void(0)" class="line-through"><i class="tiny material-icons">notifications</i>Notifications</a></li>
-            <li>
-                <div class="divider"></div>
-            </li>
-            <li><a href="javascript:void(0)" class="line-through"><i class="tiny material-icons">question_answer</i>FAQs</a></li>
-            <li>
-                <div class="divider"></div>
-            </li>
-            <li><a href="javascript:void(0)"  class="line-through"><i class="tiny material-icons">attach_money</i>Pricing</a></li>
-            <li>
-                <div class="divider"></div>
-            </li>
-            <li><a href="javascript:void(0)" class="line-through"><i class="tiny material-icons">cloud</i>About EazyWash</a></li>
-            <li>
-                <div class="divider"></div>
-            </li>
-            <li><a class="sidenav-close" href="javascript:void(0)" id="signout" ng-click="signout()"><i class="tiny material-icons">power_settings_new</i>Sign Out</a></li>
-            <li>
-                <div class="divider"></div>
-            </li>
-            <!-- <li><a class="subheader"><i class="material-icons">cloud</i>Subheader</a></li> -->
-            <!-- <li><a class="waves-effect" href="#!">Third Link With Waves</a></li> -->
-        </ul>
-        <!-- menu ends here -->
+        <!-- <li><a href="#!">Second Link</a></li> -->
+        <li><div class="divider"></div></li>
+        <li>
+          <a href="javascript:void(0)" ng-click="goTo('/dashboard')"
+            ><i class="tiny material-icons">home</i>Home</a
+          >
+        </li>
+        <li><div class="divider"></div></li>
+        <li>
+          <a href="javascript:void(0)" class="line-through"
+            ><i class="tiny material-icons">notifications</i>Notifications</a
+          >
+        </li>
+        <li><div class="divider"></div></li>
+        <li>
+          <a href="javascript:void(0)" class="line-through"
+            ><i class="tiny material-icons">question_answer</i>FAQs</a
+          >
+        </li>
+        <li><div class="divider"></div></li>
+        <li>
+          <a href="javascript:void(0)" class="line-through"
+            ><i class="tiny material-icons">attach_money</i>Pricing</a
+          >
+        </li>
+        <li><div class="divider"></div></li>
+        <li>
+          <a href="javascript:void(0)" class="line-through"
+            ><i class="tiny material-icons">cloud</i>About EazyWash</a
+          >
+        </li>
+        <li><div class="divider"></div></li>
+        <li>
+          <a
+            class="sidenav-close"
+            href="javascript:void(0)"
+            id="signout"
+            ng-click="signout()"
+            ><i class="tiny material-icons">power_settings_new</i>Sign Out</a
+          >
+        </li>
+        <li><div class="divider"></div></li>
+        <!--
+          <li><a class="subheader"><i class="material-icons">cloud</i>Subheader</a></li>
+        -->
+        <!--
+          <li><a class="waves-effect" href="#!">Third Link With Waves</a></li>
+        -->
+      </ul>
+      <!-- menu ends here -->
     </div>
 
     <!-- Main Loader -->
@@ -111,7 +156,6 @@
     <script src="js/libraries/jquery.validate.js"></script>
     <script src="js/libraries/materialize.min.js"></script>
 
-
     <script src="js/libraries/angular.min.js"></script>
     <script src="js/libraries/angular-route.js"></script>
     <script src="js/libraries/ngStorage.min.js"></script>
@@ -124,7 +168,5 @@
     <!-- Load main app.js -->
     <script src="js/custom/app.js"></script>
     <script src="js/custom/all-controller.js"></script>
-
-</body>
-
+  </body>
 </html>

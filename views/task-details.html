@@ -1,12 +1,12 @@
 <style>
     html {
-            background-image: none !important;
-        }
-    
-        .mybutton2 {
-            height: 25vw;
-        }
-    </style>
+        background-image: none !important;
+    }
+
+    .mybutton2 {
+        height: 25vw;
+    }
+</style>
 <div ng-controller="TaskDetailsCtrl">
     <!-- wizard one start -->
     <div class="container" style="padding-bottom:50px;">
@@ -68,16 +68,15 @@
             </div>
         </div>
 
-        <div class=' row my_button z-depth-4' style='    
+        <!-- <div class=' row my_button z-depth-4' style='    
         border-radius: 10px;
         padding: 10px;'>
             <div class="col s12" style='padding: 5px'>
                 <h5> Comments</h5>
                 {{task.comments}}
             </div>
-        </div>
-
-        <div class="row my_button text-center">
+        </div> -->
+        <div class="row my_button text-center wrapper_pickup_button">
             <!-- Modal Trigger -->
             <button data-target="ClosePickupTaskModal" class="btn modal-trigger" ng-if="task.type == Constant.TASK_TYPE.PICKUP_TASK && task.order.status == Constant.ORDER_STATUS.ORDERED">Close Pickup
                 Task</button>
@@ -179,7 +178,7 @@
             <div class="modal-header">
                 <div class="row m0">
                     <div class="col s12">
-                        <h5>Drop Complete <a href="javascript:void(0)" class="modal-close right"><i class="material-icons">close</i></a></h5>
+                        <h5><span>Drop Complete</span> <a href="javascript:void(0)" class="modal-close right"><i class="material-icons">close</i></a></h5>
                     </div>
                 </div>
             </div>
@@ -192,21 +191,21 @@
                                 <table class="table mb10">
                                     <tr ng-show="task.order.same_day_pickup == 1 && (appoptions && appoptions.same_day_pickup_price)">
                                         <td colspan="2" class="text-left">Today Pickup</td>
-                                        <td class="text-right">+ ${{appoptions.same_day_pickup_price}}</td>
+                                        <td class="text-right">+ {{appoptions.same_day_pickup_price | currency}}</td>
                                     </tr>
-                                    <tr ng-show="task.order.pickup_price && task.order.pickup_price != '0'">
+                                    <tr ng-show="task.order.pickup_price && task.order.pickup_price > 0">
                                         <td colspan="2" class="text-left">Fixed Time Pickup</td>
-                                        <td class="text-right">+ ${{appoptions.same_day_pickup_price}}</td>
+                                        <td class="text-right">+ {{task.order.pickup_price | currency}}</td>
                                     </tr>
 
-                                    <tr ng-show="task.order.next_day_drop == 1 && (appoptions && appoptions.next_day_delivery_price)">
+                                    <tr ng-show="task.order.next_day_drop == 1 && (appoptions && appoptions.next_day_delivery_price > 0)">
                                         <td colspan="2" class="text-left">Next Day Delievery</td>
-                                        <td class="text-right">+ ${{appoptions.next_day_delivery_price}}</td>
+                                        <td class="text-right">+ {{appoptions.next_day_delivery_price | currency}}</td>
                                     </tr>
 
-                                    <tr ng-show="task.order.drop_price && task.order.drop_price != '0'">
+                                    <tr ng-show="task.order.drop_price && task.order.drop_price > 0">
                                         <td colspan="2" class="text-left">Fixed Time Delievery</td>
-                                        <td class="text-right">+ ${{task.order.drop_price}}</td>
+                                        <td class="text-right">+ {{task.order.drop_price | currency}}</td>
                                     </tr>
                                 </table>
 
@@ -214,14 +213,14 @@
                                     <tr ng-repeat="item in order_items">
                                         <td class="text-left">{{item.title}}</td>
                                         <td>{{item.quantity}}</td>
-                                        <td class="text-right">+ ${{item.price}}</td>
+                                        <td class="text-right">+ {{item.price | currency}}</td>
                                     </tr>
                                 </table>
-                                <table class="table total items mt10">
+                                <table class="table total items">
                                     <tr>
                                         <td class="text-left">Total</td>
                                         <td></td>
-                                        <td class="text-right">${{getTotalAmount()}}</td>
+                                        <td class="text-right">{{getTotalAmount() | currency}}</td>
                                     </tr>
                                 </table>
 
@@ -241,29 +240,18 @@
                     </div>
                 </div>
                 <div class="modal-footer text-center" ng-if="!loading && task.type == Constant.TASK_TYPE.DROP_TASK">
-                    <!-- <form action="https://payment.architrade.com/cgi-ssl/ticket_auth.cgi" method="post">
-                        <input type="hidden" name="merchant" value="90246240" />
-                        <input type="hidden" name="ticket" value="{{vault_details.transact}}" />
-                        <input type="hidden" name="amount" value="{{getTotalAmount()}}" />
-                        <input type="hidden" name="currency" value="578" />
-                        <input type="hidden" name="orderid" value="{{task.order_id}}" />
-                        <input type="hidden" name="preauth" value="1" />
-                        <input type="hidden" name="test" value="1" />
-                        <input type="hidden" name="accepturl" value="http://localhost/easywashgo/#payment-success/task/{{task.id}}" />
-                        <input type="hidden" name="declineurl" value="http://localhost/easywashgo/#payment-error/task/{{task.id}}" />
-                    </form> -->
                     <button type="button" class="btn btn-primary" ng-click="makePayment()">YES</button>
                     <button type="button" class="modal-close btn btn-default">NO</button>
                 </div>
             </div>
 
             <div ng-show="paymentSubmitted">
-                <iframe width="100%" height="100%" id="paymentForm" class="paymentIframeForm"></iframe>
+                <div class="paymentIframeContainer"></div>
             </div>
         </div>
 
 
-        <section style='position: fixed;z-index:100; bottom: 0px; left:0px; background-color:#0c3f5a; color:white; width: 100%'>
+        <!-- <section style='position: fixed;z-index:100; bottom: 0px; left:0px; background-color:#0c3f5a; color:white; width: 100%'>
             <div class="row" style='padding-top:10px'>
                 <div class="col s3 center-align">
                     <i class="material-icons">map</i>
@@ -278,7 +266,7 @@
                     <i class="material-icons">assignment_turned_in</i>
                 </div>
             </div>
-        </section>
+        </section> -->
     </div>
 </div>
 
