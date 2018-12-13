@@ -1,0 +1,279 @@
+<style>
+    html {
+        background-image: none !important;
+    }
+
+    .mybutton2 {
+        height: 25vw;
+    }
+</style>
+<div ng-controller="TaskDetailsCtrl">
+    <!-- wizard one start -->
+    <div class="container" style="padding-bottom:50px;">
+        <div class="row page-title-row">
+            <div class="col s9 page-title-row-col">
+                <div class='left-align'>
+
+                    <h5>{{task.type == Constant.TASK_TYPE.PICKUP_TASK?'Pick Up': 'Drop'}} Task Details</h5>
+                    Order Id - {{task.order_id}}
+                </div>
+            </div>
+            <div class="col s3 page-title-row-col">
+                <div class='right-align'>
+                    <h4>5552</h4>
+                    <h5>234</h5>
+                </div>
+            </div>
+        </div>
+
+        <div class=' row my_button z-depth-4' style='    
+        border-radius: 10px;
+        padding: 10px;'>
+            <div class="col s12" style='padding: 5px'>
+                <h4 style='margin-bottom: 10px;'>{{task.customer.full_name}}</h4>
+                <h4>{{task.customer.phone}}</h4>
+            </div>
+        </div>
+        <div class=' row my_button z-depth-4' style='    
+        border-radius: 10px;
+        padding: 10px;'>
+            <div class="col s12" style='padding: 5px' ng-if="task.type == Constant.TASK_TYPE.PICKUP_TASK">
+                <h5 style='margin-bottom: 10px;' ng-if="task.order.pickup_at_door == 0">Pick Up Time:
+                    {{task.order.pickup_time_from}} - {{task.order.pickup_time_to}}</h5>
+                <h5 style='margin-bottom: 10px;' ng-if="task.order.pickup_at_door == 1">Pick up at Door</h5>
+                <!-- <h5 style='margin-bottom: 10px;'>Pick at Door: {{task.pickup_at_door}}</h5>
+                <h5 style='margin-bottom: 10px;'>Drop Date: {{task.drop_date}}</h5>
+                <h5 style='margin-bottom: 10px;'>Drop Time: {{task.drop_time_from}} - {{task.drop_time_to}}</h5>
+                <h5 style='margin-bottom: 10px;'>Drop at Door: {{task.drop_at_door}}</h5> -->
+            </div>
+            <div class="col s12" style='padding: 5px' ng-if="task.type == Constant.TASK_TYPE.DROP_TASK">
+                <h5 style='margin-bottom: 10px;' ng-if="task.order.drop_at_door == 0">Drop Time:
+                    {{task.order.drop_time_from}} - {{task.order.drop_time_to}}</h5>
+                <h5 style='margin-bottom: 10px;' ng-if="task.order.drop_at_door == 1">Drop at Door</h5>
+                <!-- <h5 style='margin-bottom: 10px;'>Pick at Door: {{task.pickup_at_door}}</h5>
+                    <h5 style='margin-bottom: 10px;'>Drop Date: {{task.drop_date}}</h5>
+                    <h5 style='margin-bottom: 10px;'>Drop Time: {{task.drop_time_from}} - {{task.drop_time_to}}</h5>
+                    <h5 style='margin-bottom: 10px;'>Drop at Door: {{task.drop_at_door}}</h5> -->
+            </div>
+        </div>
+
+        <div class=' row my_button z-depth-4' style='    
+        border-radius: 10px;
+        padding: 10px;'>
+            <div class="col s12" style='padding: 5px'>
+                <h5 style='margin-bottom: 10px;'>{{task.address.street_name}}</h5>
+                <h5 style='margin-bottom: 10px;'>Floor: {{task.address.floor}} , Unit: {{task.address.unit_number}}</h5>
+
+                <h5 style='margin-bottom: 10px;'>P.O.Box: {{task.address.pobox}}</h5>
+            </div>
+        </div>
+
+        <!-- <div class=' row my_button z-depth-4' style='    
+        border-radius: 10px;
+        padding: 10px;'>
+            <div class="col s12" style='padding: 5px'>
+                <h5> Comments</h5>
+                {{task.comments}}
+            </div>
+        </div> -->
+        <div class="row my_button text-center wrapper_pickup_button">
+            <!-- Modal Trigger -->
+            <button data-target="ClosePickupTaskModal" class="btn modal-trigger" ng-if="task.type == Constant.TASK_TYPE.PICKUP_TASK && task.order.status == Constant.ORDER_STATUS.ORDERED">Close Pickup
+                Task</button>
+            <button ng-click="openModal('CloseDropTaskModal')" class="btn modal-trigger" ng-if="task.type == Constant.TASK_TYPE.DROP_TASK && task.order.status == Constant.ORDER_STATUS.PICKED_UP">Close Drop Task</button>
+        </div>
+
+        <!-- Close Pickup Modal Structure -->
+        <div id="ClosePickupTaskModal" class="modal laundry-modal modal-fixed-footer">
+            <div class="modal-header">
+                <div class="row m0">
+                    <div class="col s1 p0">
+                        <a href="javascript:void(0)" class="back-btn" ng-if="canGoPreviousStep" ng-click="!popupLoading && goPrevious()"><i
+                                class="material-icons">chevron_left</i></a>
+                    </div>
+                    <div class="col s10 p0 center-align">
+                        <h5 style="margin-top:3px;">{{canGoPreviousStep?'Pickup Complete':'Enter Laundry Details'}}</h5>
+                    </div>
+                    <div class="col s1 p0 right-align">
+                        <a href="javascript:void(0)" class="modal-close"><i class="material-icons">close</i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-content">
+                <div ng-if="!loading && task.type == Constant.TASK_TYPE.PICKUP_TASK">
+                    <div ng-if="!canGoPreviousStep">
+                        <div class="laundry-items">
+                            <div class="row laundry-item-row" ng-repeat="laundry in laundrypricing | filter:filterByCategory">
+                                <div class="col s7 pl0 text-center">
+                                    <a href="javascript:void(0)" class="item-title" ng-click="!popupLoading && addItem(laundry.id)">{{laundry.title}}</a>
+                                </div>
+                                <div class="col s3 p0">
+                                    <input type="text" readonly="readonly" value="{{laundry.items_count}}">
+                                </div>
+                                <div class="col s2 pr0 text-right">
+                                    <a href="javascript:void(0)" class="item-remove" ng-click="!popupLoading && removeItem(laundry.id)">
+                                        <i class="material-icons">remove_circle_outline</i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="laundry-footer">
+                            <div class="row status-bar" ng-if="(laundrypricing | filter:filterByItemsCount).length > 0">
+                                <div class="col s8">
+                                    <label class="tag" ng-repeat="laundry in laundrypricing | filter:filterByItemsCount">{{laundry.title}}<span
+                                            class="item_count">{{laundry.items_count}}</span></label>
+                                </div>
+                                <div class="col s4 text-right">
+                                    <button type="button" class="waves-effect waves-green btn-small mt10" ng-click="goNext()">NEXT</button>
+                                </div>
+                            </div>
+                            <section class="laundry-filter">
+                                <div class="row m0">
+                                    <div class="col s3 center-align" ng-class="{'active': filterIndex == $index}"
+                                        ng-repeat="filter in filterOptions" ng-click="filterItems($index)">
+                                        <div class="font-bold">{{filter}}</div>
+                                    </div>
+                                    <div class="col s3 center-align" ng-class="{'active': filterIndex == -1}" ng-click="filterItems(-1)">
+                                        <div class="font-bold">All</div>
+                                    </div>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
+                    <div class="" ng-if="canGoPreviousStep" style="padding: 15px;">
+                        <div class="row">
+                            <div class="col s12">
+                                <h6>Enter Id</h6>
+                            </div>
+                            <div class="col s12">
+                                <input type="text" ng-model="closetaskdetails.id" ng-disabled="popupLoading" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col s12">
+                                <h6>Enter Id 2</h6>
+                            </div>
+                            <div class="col s12">
+                                <input type="text" ng-model="closetaskdetails.other_id" ng-disabled="popupLoading" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col s12">
+                                <h6>Enter Comments</h6>
+                            </div>
+                            <div class="col s12">
+                                <textarea class="materialize-textarea" rows="4" ng-model="closetaskdetails.comments" ng-disabled="popupLoading"></textarea>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <button type="button" class="btn btn-primary" ng-click="ClosePickupTask()" ng-disabled="popupLoading">DONE</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Close Drop Modal Structure -->
+        <div id="CloseDropTaskModal" class="modal drop-task-modal modal-fixed-footer">
+            <div class="modal-header">
+                <div class="row m0">
+                    <div class="col s12 p0">
+                        <h5><span>Drop Complete</span> <a href="javascript:void(0)" class="modal-close right"><i class="material-icons">close</i></a></h5>
+                    </div>
+                </div>
+            </div>
+            <div ng-show="!paymentSubmitted">
+                <div class="modal-content" ng-if="!loading && task.type == Constant.TASK_TYPE.DROP_TASK">
+                    <h5>Are you sure you want to charge to customer?</h5>
+                    <div class="row">
+                        <div class="col s12 items">
+                            <div class="items-container">
+                                <table class="table mb10">
+                                    <tr ng-show="task.order.same_day_pickup == 1 && (appoptions && appoptions.same_day_pickup_price)">
+                                        <td colspan="2" class="text-left">Today Pickup</td>
+                                        <td class="text-right">+ {{appoptions.same_day_pickup_price | currency}}</td>
+                                    </tr>
+                                    <tr ng-show="task.order.pickup_price && task.order.pickup_price > 0">
+                                        <td colspan="2" class="text-left">Fixed Time Pickup</td>
+                                        <td class="text-right">+ {{task.order.pickup_price | currency}}</td>
+                                    </tr>
+
+                                    <tr ng-show="task.order.next_day_drop == 1 && (appoptions && appoptions.next_day_delivery_price > 0)">
+                                        <td colspan="2" class="text-left">Next Day Delievery</td>
+                                        <td class="text-right">+ {{appoptions.next_day_delivery_price | currency}}</td>
+                                    </tr>
+
+                                    <tr ng-show="task.order.drop_price && task.order.drop_price > 0">
+                                        <td colspan="2" class="text-left">Fixed Time Delievery</td>
+                                        <td class="text-right">+ {{task.order.drop_price | currency}}</td>
+                                    </tr>
+                                </table>
+
+                                <table class="table items">
+                                    <tr ng-repeat="item in order_items">
+                                        <td class="text-left">{{item.title}}</td>
+                                        <td>{{item.quantity}}</td>
+                                        <td class="text-right">+ {{item.price | currency}}</td>
+                                    </tr>
+                                </table>
+                                <table class="table total items">
+                                    <tr>
+                                        <td class="text-left">Total</td>
+                                        <td></td>
+                                        <td class="text-right">{{getTotalAmount() | currency}}</td>
+                                    </tr>
+                                </table>
+
+                                <!-- <div class="item item-body orderlistbody">
+                                    <div ng-repeat="item in order_items">
+                                        <i class="icon ion-ios-plus-outline"> </i> ${{item.price}} - {{item.quantity}} {{item.title}}
+                                    </div>
+                                </div> -->
+                            </div>
+
+                            <!-- <div class="item item-body orderlistbody result">
+                                <div>
+                                    <i class="icon ion-ios-plus-outline"> </i> ${{getTotalAmount()}} - <strong>Total</strong>
+                                </div>
+                            </div> -->
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer text-center" ng-if="!loading && task.type == Constant.TASK_TYPE.DROP_TASK">
+                    <button type="button" class="btn btn-primary" ng-click="makePayment()">YES</button>
+                    <button type="button" class="modal-close btn btn-default">NO</button>
+                </div>
+            </div>
+
+            <div ng-show="paymentSubmitted">
+                <div class="paymentIframeContainer"></div>
+            </div>
+        </div>
+
+
+        <!-- <section style='position: fixed;z-index:100; bottom: 0px; left:0px; background-color:#0c3f5a; color:white; width: 100%'>
+            <div class="row" style='padding-top:10px'>
+                <div class="col s3 center-align">
+                    <i class="material-icons">map</i>
+                </div>
+                <div class="col s3 center-align">
+                    <i class="material-icons">call</i>
+                </div>
+                <div class="col s3 center-align">
+                    <i class="material-icons">library_books</i>
+                </div>
+                <div class="col s3 center-align">
+                    <i class="material-icons">assignment_turned_in</i>
+                </div>
+            </div>
+        </section> -->
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $(".navbar-fixed").show();
+        $(".sidenav").sidenav("close");
+        $(".modal").modal({dismissible: false});
+    });
+</script>

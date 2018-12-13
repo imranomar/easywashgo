@@ -1,0 +1,73 @@
+{
+  "project_info": {
+    "project_number": "530191388648",
+    "firebase_url": "https://easywashgo-4b212.firebaseio.com",
+    "project_id": "easywashgo-4b212",
+    "storage_bucket": "easywashgo-4b212.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:530191388648:android:0c3a712881b21a38",
+        "android_client_info": {
+          "package_name": "io.cordova.eazywashapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "530191388648-u0p2f7gqv08d2261v97emlglori8e30d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCIyn466p3XnQdEvcmPQ8Xnbh6KM3DiFBE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:530191388648:android:1e8201630c277123",
+        "android_client_info": {
+          "package_name": "io.cordova.eazywashgo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "530191388648-u0p2f7gqv08d2261v97emlglori8e30d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCIyn466p3XnQdEvcmPQ8Xnbh6KM3DiFBE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
