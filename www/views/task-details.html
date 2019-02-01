@@ -20,8 +20,8 @@
             </div>
             <div class="col s3 page-title-row-col">
                 <div class='right-align'>
-                    <h4>5552</h4>
-                    <h5>234</h5>
+                    <h4>-</h4>
+                    <h5>-</h5>
                 </div>
             </div>
         </div>
@@ -62,8 +62,8 @@
         padding: 10px;'>
             <div class="col s12" style='padding: 5px'>
                 <h5 style='margin-bottom: 10px;'>{{task.address.street_name}}</h5>
-                <h5 style='margin-bottom: 10px;'>Floor: {{task.address.floor}} , Unit: {{task.address.unit_number}}</h5>
-
+                <h5 style='margin-bottom: 10px;'>Floor: {{task.address.floor}}</h5>
+                <h5 style='margin-bottom: 10px;'>Unit: {{task.address.unit_number}}</h5>
                 <h5 style='margin-bottom: 10px;'>P.O.Box: {{task.address.pobox}}</h5>
             </div>
         </div>
@@ -272,8 +272,6 @@
 
 <script>
     $(document).ready(function() {
-        $(".navbar-fixed").show();
-        $(".sidenav").sidenav("close");
         $(".modal").modal({dismissible: false});
     });
 </script>
