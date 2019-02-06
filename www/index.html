@@ -25,7 +25,7 @@
     </style>
   </head>
 
-  <body ng-controller="AppController">
+  <body ng-controller="AppController" ng-class="{'offline':!isOnline}">
     <div class="navbar-fixed" ng-if="hideNavBar == false">
       <div class="nav-wrapper">
         <table class="top_bar" cellspcaing="0" cellpadding="0">
@@ -67,8 +67,13 @@
       </div>
       <div class="curve"></div>
     </div>
+    <div class="no-internet" ng-if="!isOnline">
+      <div class="no-internet-text">
+        No internet connection!
+      </div>
+    </div>
     <ng-view></ng-view>
-
+    
     <!-- menu starts here -->
     <div>
       <ul id="slide-out" class="sidenav">
@@ -137,7 +142,7 @@
     <ng-include src="'views/includes/main-loader.html'"></ng-include>
 
     <!-- App Scripts -->
-    <!-- <script src="cordova.js"></script> -->
+    <script src="cordova.js"></script>
 
     <!-- Scripts -->
     <script src="js/libraries/jquery.min.js"></script>
@@ -146,6 +151,7 @@
     <script src="js/libraries/materialize.min.js"></script>
 
     <script src="js/libraries/angular.min.js"></script>
+    <script src="js/libraries/ng-cordova.js"></script>
     <script src="js/libraries/angular-route.js"></script>
     <script src="js/libraries/ngStorage.min.js"></script>
     <script src="js/libraries/angular-messages.min.js"></script>

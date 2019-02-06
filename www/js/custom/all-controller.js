@@ -1,95 +1,111 @@
 // App Controller
-app.controller('AppController', function ($scope, $rootScope, $location, CommonService) {
-	$rootScope.showLoading = false;
+app.controller("AppController", function(
+  $scope,
+  $rootScope,
+  $route,
+  $templateCache,
+  $location,
+  CommonService
+) {
+  $rootScope.showLoading = false;
 
-	$rootScope.goTo = function(route)
-	{
-		$('.sidenav').sidenav('close');
-		$location.path(route);
-	}
+  $rootScope.goTo = function(route) {
+    $(".sidenav").sidenav("close");
+    $location.path(route);
+  };
 
-	$scope.signout = function()
-	{
-		CommonService.removeUserDetailsLocal();
-		$rootScope.goTo('/login');
-	}
+  $scope.signout = function() {
+    CommonService.removeUserDetailsLocal();
+    $rootScope.goTo("/login");
+  };
 
-  $scope.closemenu = function ()
-  {
+  $scope.closemenu = function() {
     $location.path("/dashboard");
     console.log("MenuCtrl");
-  }
+  };
 
   $rootScope.loadPaymentForm = function(formHtml) {
     $(".paymentIframeContainer").html("");
-    $(".paymentIframeContainer").html(
-      '<iframe id="paymentIframe"></iframe>'
-    );
+    $(".paymentIframeContainer").html('<iframe id="paymentIframe"></iframe>');
     var doc = document.getElementById("paymentIframe").contentWindow.document;
     doc.open();
     doc.write(formHtml);
     doc.close();
   };
+
+  $rootScope.retry = function() {
+    var currentPageTemplate = $route.current.templateUrl;
+    $templateCache.remove(currentPageTemplate);
+    $route.reload();
+  };
 });
 
 //Login of Controller
-app.controller('LoginCtrl', function($scope, $rootScope, $location, $timeout, CommonService){
-	$rootScope.showLoading = false;
+app.controller("LoginCtrl", function(
+  $scope,
+  $rootScope,
+  $location,
+  $timeout,
+  CommonService
+) {
+  $rootScope.showLoading = false;
 
- 	$scope.logindata = {
-		email: '',
-		password: ''
-	};
+  $scope.logindata = {
+    email: "",
+    password: ""
+  };
 
-	$scope.checked = true;
+  $scope.checked = true;
 
- 	$scope.err = false;
+  $scope.err = false;
 
-	$scope.loginsubmit = function () {
-		$scope.err = false;
-		
-		let email= $scope.logindata.email;
-		let password= $scope.logindata.password;
+  $scope.loginsubmit = function() {
+    $scope.err = false;
 
-		$rootScope.showLoading = true;
+    let email = $scope.logindata.email;
+    let password = $scope.logindata.password;
 
-		var apiUrl = 'customersapi/authenticate?email='+email+'&password='+password;
-		
-		CommonService.CallAjaxUsingPostRequest(apiUrl, { device_id: $rootScope.fcm_token })
-          .then(
-            function(data) {
-				if(data != 0) {
-					debugger;
-					CommonService.storeUserDetailsLocal(data, $scope.checked)
-					$location.path('/dashboard');
-				} else {
-					$scope.err = true;
-				}
-            },
-            function(error) {
-				console.log("error");
-				console.log(err);
-			}
-          )
-          .finally(function() {
-            $rootScope.showLoading = false;
-          });
-	}
-	
-	/** Validation **/
-	$scope.validationOptions = {
-		rules: {
-			email: {
-				required: true,
-				email: true
-			},
-			password: {
-				required: true
-			}
-		}
-	};
+    $rootScope.showLoading = true;
 
- });
+    var apiUrl =
+      "customersapi/authenticate?email=" + email + "&password=" + password;
+
+    CommonService.CallAjaxUsingPostRequest(apiUrl, {
+      device_id: $rootScope.fcm_token
+    })
+      .then(
+        function(data) {
+          if (data != 0) {
+            debugger;
+            CommonService.storeUserDetailsLocal(data, $scope.checked);
+            $location.path("/dashboard");
+          } else {
+            $scope.err = true;
+          }
+        },
+        function(error) {
+          console.log("error");
+          console.log(err);
+        }
+      )
+      .finally(function() {
+        $rootScope.showLoading = false;
+      });
+  };
+
+  /** Validation **/
+  $scope.validationOptions = {
+    rules: {
+      email: {
+        required: true,
+        email: true
+      },
+      password: {
+        required: true
+      }
+    }
+  };
+});
 
 // Forget password of Controller
 app.controller("ForgetCtrl", function($scope) {
@@ -104,25 +120,25 @@ app.controller("ForgetCtrl", function($scope) {
 app.controller("DashboardCtrl", function(
   $scope,
   $rootScope,
-  $location,
+  $interval,
   $filter,
   CommonService
 ) {
-
   $scope.filterIndex = -1;
 
   $scope.currentDate = new Date();
 
   var filteredDate = CommonService.getTaskFilterDateLocal();
 
-  if(filteredDate) {
-    $scope.date = new Date(filteredDate);    
+  if (filteredDate) {
+    $scope.date = new Date(filteredDate);
   } else {
     $scope.date = new Date();
   }
-  
+
   $scope.filters = ["9-12", "12-15", "15-18", "18-21"];
 
+  $scope.pending_tasks_count = 0;
   $scope.all_tasks_list = [];
   $scope.tasks_list = [];
   $scope.filtered_tasks_list = [];
@@ -133,21 +149,25 @@ app.controller("DashboardCtrl", function(
   $scope.cityData = [];
   $scope.avaliableTime;
   
-  var apiUrl = "tasksapi?expand=order,address,customer";
-  CommonService.CallAjaxUsingGetRequest(apiUrl)
-    .then(
-      function(result) {
-        console.log(result);
-        $scope.all_tasks_list = result;
-        $scope.FilterTaskByDateList();
-      },
-      function(error) {}
-    )
-    .finally(function() {
-      $rootScope.showLoading = false;
-    });
+  function loadTasks() {
+    const apiUrl = "tasksapi?expand=order,address,customer";
+    CommonService.CallAjaxUsingGetRequest(apiUrl)
+      .then(
+        function(result) {
+          console.log(result);
+          $scope.all_tasks_list = result;
+          $scope.FilterTaskByDateList();
+        },
+        function(error) {}
+      )
+      .finally(function() {
+        $rootScope.showLoading = false;
+      });
+  }
 
-    CommonService.CallAjaxUsingGetRequest("citiesapi")
+  loadTasks();
+
+  CommonService.CallAjaxUsingGetRequest("citiesapi")
     .then(
       function(result) {
         console.log(result);
@@ -155,15 +175,12 @@ app.controller("DashboardCtrl", function(
       },
       function(error) {}
     )
-    .finally(function() {
+    .finally(function() {});
 
-    });
-
-    
   $scope.FilterTaskByDateList = function() {
-    var filteredDate = $filter('date')($scope.date, "yyyy-MM-dd");
+    var filteredDate = $filter("date")($scope.date, "yyyy-MM-dd");
 
-    $scope.tasks_list = $scope.all_tasks_list.filter(function(task) {      
+    $scope.tasks_list = $scope.all_tasks_list.filter(function(task) {
       if (task.type == 1) {
         return task.order.pickup_date == filteredDate;
       } else {
@@ -171,25 +188,28 @@ app.controller("DashboardCtrl", function(
       }
     });
 
+    $scope.pending_tasks_count = $scope.tasks_list.filter(function(task) {
+      return task.status == 0;
+    }).length;
+
     $scope.FilterTaskByHour();
-  }
-
-  $scope.FilterTaskByHour = function() {
-    var currentHour = $scope.date.getHours();
-
-    var index = $scope.filters.findIndex(function(item) {
-      var arr = item.split("-");
-      return currentHour >= parseInt(arr[0]) && currentHour <= parseInt(arr[1]);
-    });
-
-    $scope.FilterTaskList(index);
   };
 
+  $scope.FilterTaskByHour = function() {
+    //var currentHour = $scope.date.getHours();
+
+    // var index = $scope.filters.findIndex(function(item) {
+    //   var arr = item.split("-");
+    //   return currentHour >= parseInt(arr[0]) && currentHour <= parseInt(arr[1]);
+    // });
+
+    $scope.FilterTaskList($scope.filterIndex);
+  };
 
   $scope.FilterTaskList = function(filterIndex) {
     $scope.filterIndex = filterIndex;
 
-    if(filterIndex == -1) {
+    if (filterIndex == -1) {
       $scope.filtered_tasks_list = $scope.tasks_list;
     } else {
       var hours = $scope.filters[filterIndex].split("-");
@@ -212,28 +232,28 @@ app.controller("DashboardCtrl", function(
   };
 
   $scope.showPreviousDayTask = function() {
-    var decreament = $filter('date')($scope.date, 'EEEE') == 'Monday'?2:1;
+    var decreament = $filter("date")($scope.date, "EEEE") == "Monday" ? 2 : 1;
     $scope.date.setDate($scope.date.getDate() - decreament);
 
     CommonService.storeTaskFilterDateLocal($scope.date);
 
     $scope.FilterTaskByDateList();
-  }
+  };
 
   $scope.goToTaday = function() {
     $scope.date = new Date();
     CommonService.removeTaskFilterDateLocal();
     $scope.FilterTaskByDateList();
-  }
+  };
 
   $scope.showNextDayTask = function() {
-    var increament = $filter('date')($scope.date, 'EEEE') == 'Saturday'?2:1;
+    var increament = $filter("date")($scope.date, "EEEE") == "Saturday" ? 2 : 1;
     $scope.date.setDate($scope.date.getDate() + increament);
 
     CommonService.storeTaskFilterDateLocal($scope.date);
 
     $scope.FilterTaskByDateList();
-  }
+  };
 
   $scope.menuopen = function() {
     //$location.path("/menu");
@@ -254,6 +274,12 @@ app.controller("DashboardCtrl", function(
     }
     return cityText;
   };
+
+  var promise = $interval(loadTasks, 10000);
+  $scope.$on('$destroy',function(){
+      if(promise)
+          $interval.cancel(promise);   
+  });
 });
 
 // pricing of Controller
@@ -382,7 +408,6 @@ app.controller("TaskDetailsCtrl", function(
   $routeParams,
   $location
 ) {
-
   //  localstorage keys
   var task_id = $routeParams.id;
   var task_status = 0;
@@ -412,7 +437,8 @@ app.controller("TaskDetailsCtrl", function(
   $scope.canGoPreviousStep = false;
 
   //get task details
-  var apiUrl =  "tasksapi/view/?id=" + task_id + "&expand=order,address,customer,vault";
+  var apiUrl =
+    "tasksapi/view/?id=" + task_id + "&expand=order,address,customer,vault";
 
   CommonService.CallAjaxUsingGetRequest(apiUrl)
     .then(
@@ -423,152 +449,124 @@ app.controller("TaskDetailsCtrl", function(
         $scope.vault_details = $scope.task.vault;
 
         //not picked get laundry pricing to close
-        if ($scope.task.order && $scope.task.order.status != 2)
-        {
-          if($scope.task.type && $scope.task.type == 1)
-          {
+        if ($scope.task.order && $scope.task.order.status != 2) {
+          if ($scope.task.type && $scope.task.type == 1) {
             CommonService.CallAjaxUsingGetRequest("laundrypricingapi")
-            .then(
-              function(result) {
-                console.log(result);
-                if (result && result.length > 0) 
-                {
-                  var data = result;
-                  $scope.laundrypricing = data.map(function(el) 
-                  {
-                    var obj = Object.assign({}, el);
-                    obj.items_count = 0;
-                    return obj;
-                  });
-                }
-              },
-              function(error) {}
-            )
-            .finally(function() {
-              $rootScope.showLoading = false;
-            });
-          } 
-          else
-          {
-            CommonService.CallAjaxUsingGetRequest("optionsapi")
-            .then(
-              function(result) {
-                console.log(result);
-                if(result && result.length > 0)
-                {
-                  $scope.appoptions = result[0];
-                }
-              },
-              function(error) {}
-            )
-            .finally(function() {
-              $rootScope.showLoading = false;
-            });
-
-            apiUrl = "ordersapi/view/?id=" +  $scope.task.order_id + "&expand=items";
-            CommonService.CallAjaxUsingGetRequest(apiUrl)
-            .then(
-              function(result) {
-                if (result)
-                {
-                  if(result.items && result.items.length > 0 ) 
-                  {
-                    $scope.order_items = result.items;
+              .then(
+                function(result) {
+                  console.log(result);
+                  if (result && result.length > 0) {
+                    var data = result;
+                    $scope.laundrypricing = data.map(function(el) {
+                      var obj = Object.assign({}, el);
+                      obj.items_count = 0;
+                      return obj;
+                    });
                   }
-                }
-              },
-              function(error) {}
-            )
-            .finally(function() {
-              $rootScope.showLoading = false;
-            });
-          }   
-        } 
-        else
-        {
+                },
+                function(error) {}
+              )
+              .finally(function() {
+                $rootScope.showLoading = false;
+              });
+          } else {
+            CommonService.CallAjaxUsingGetRequest("optionsapi")
+              .then(
+                function(result) {
+                  console.log(result);
+                  if (result && result.length > 0) {
+                    $scope.appoptions = result[0];
+                  }
+                },
+                function(error) {}
+              )
+              .finally(function() {
+                $rootScope.showLoading = false;
+              });
+
+            apiUrl =
+              "ordersapi/view/?id=" + $scope.task.order_id + "&expand=items";
+            CommonService.CallAjaxUsingGetRequest(apiUrl)
+              .then(
+                function(result) {
+                  if (result) {
+                    if (result.items && result.items.length > 0) {
+                      $scope.order_items = result.items;
+                    }
+                  }
+                },
+                function(error) {}
+              )
+              .finally(function() {
+                $rootScope.showLoading = false;
+              });
+          }
+        } else {
           $rootScope.showLoading = false;
-        } 
+        }
       },
       function(error) {}
     )
-    .finally(function() {
-      
+    .finally(function() {});
+
+  $scope.filterByCategory = function(item) {
+    if ($scope.filterIndex > -1) {
+      var filterValue = $scope.filterOptions[$scope.filterIndex];
+
+      if (item.type == filterValue) return true;
+      else return false;
+    } else {
+      return true;
+    }
+  };
+
+  $scope.filterItems = function(index) {
+    $scope.filterIndex = index;
+  };
+
+  $scope.addItem = function(id) {
+    var index = $scope.laundrypricing.findIndex(function(item) {
+      return item.id == id;
+    });
+    if (index > -1) $scope.laundrypricing[index].items_count += 1;
+  };
+
+  $scope.removeItem = function(id) {
+    var index = $scope.laundrypricing.findIndex(function(item) {
+      return item.id == id;
     });
 
+    if (index > -1) {
+      if ($scope.laundrypricing[index].items_count > 0)
+        $scope.laundrypricing[index].items_count -= 1;
+    }
+  };
 
-    $scope.filterByCategory = function(item) 
-    {
-      if($scope.filterIndex > -1)
-      {
-        var filterValue = $scope.filterOptions[$scope.filterIndex];
+  $scope.filterByItemsCount = function(item) {
+    if (item.items_count > 0) return true;
+    else return false;
+  };
 
-        if(item.type == filterValue)
-          return true;
-        else
-          return false;
-      } 
-      else 
-      {
-        return true;
-      }
+  $scope.goNext = function() {
+    $scope.canGoPreviousStep = true;
+  };
+
+  $scope.goPrevious = function() {
+    $scope.canGoPreviousStep = false;
+  };
+
+  $scope.ClosePickupTask = function() {
+    if ($scope.closetaskdetails.id <= 0) {
+      alert("Please enter id");
+      console.log("Please enter id");
+      return;
     }
 
-    $scope.filterItems = function(index)
-    {
-      $scope.filterIndex = index;
-    }
-
-    $scope.addItem = function(id)
-    {
-      var index = $scope.laundrypricing.findIndex(function(item){
-        return item.id == id
-      })
-      if(index > -1)
-        $scope.laundrypricing[index].items_count +=1;
-    }
-
-    $scope.removeItem = function(id)
-    {
-      var index = $scope.laundrypricing.findIndex(function(item){
-        return item.id == id
-      })
-
-      if(index > -1)
-      {
-        if($scope.laundrypricing[index].items_count > 0)
-          $scope.laundrypricing[index].items_count -=1;
-      }
-    }
-
-    $scope.filterByItemsCount = function(item) 
-    {
-      if(item.items_count > 0)
-        return true;
-      else 
-        return false;
-    }
-
-    $scope.goNext = function()
-    {
-      $scope.canGoPreviousStep = true;
-    }
-
-    $scope.goPrevious = function() 
-    {
-      $scope.canGoPreviousStep = false;
-    }
-
-    $scope.ClosePickupTask = function()
-    {
-      if ($scope.closetaskdetails.id <= 0) {
-        alert("Please enter id");
-        console.log("Please enter id");
-        return;
-      }
-
-      var selectedLaundryItems = $scope.laundrypricing.filter(function(item){
+    var selectedLaundryItems = $scope.laundrypricing
+      .filter(function(item) {
         return item.items_count > 0;
-      }).map(function(item) {
+      })
+      .map(function(item) {
         var order_item = {};
         order_item.order_id = $scope.task.order_id;
         order_item.title = item.title;
@@ -579,32 +577,29 @@ app.controller("TaskDetailsCtrl", function(
         return order_item;
       });
 
-      var request_data = {
-        task_id: $scope.task.id,
-        task_status: $rootScope.Constant.TASK_STATUS.CLOSE,
-        order_id: $scope.task.order_id,
-        pickup_close_id: $scope.closetaskdetails.id,
-        pickup_close_other_id: $scope.closetaskdetails.other_id,
-        pickup_close_comments: $scope.closetaskdetails.comments,
-        order_status: $rootScope.Constant.ORDER_STATUS.PICKED_UP,
-        order_items: selectedLaundryItems
-      };
+    var request_data = {
+      task_id: $scope.task.id,
+      task_status: $rootScope.Constant.TASK_STATUS.CLOSE,
+      order_id: $scope.task.order_id,
+      pickup_close_id: $scope.closetaskdetails.id,
+      pickup_close_other_id: $scope.closetaskdetails.other_id,
+      pickup_close_comments: $scope.closetaskdetails.comments,
+      order_status: $rootScope.Constant.ORDER_STATUS.PICKED_UP,
+      order_items: selectedLaundryItems
+    };
 
-      $rootScope.showLoading = true;
-      $scope.popupErr = "";
-      $scope.popupLoading = true;
-      apiUrl = "orderitemsapi/createmultiple";
+    $rootScope.showLoading = true;
+    $scope.popupErr = "";
+    $scope.popupLoading = true;
+    apiUrl = "orderitemsapi/createmultiple";
 
-      CommonService.CallAjaxUsingPostRequest(apiUrl, request_data, true)
+    CommonService.CallAjaxUsingPostRequest(apiUrl, request_data, true)
       .then(
         function(data) {
-          if(data && data.Success == true) 
-          {
+          if (data && data.Success == true) {
             alert("Pickup closed successfully");
             $location.path("/dashboard");
-          }
-          else
-          {
+          } else {
             alert(data.Message);
           }
         },
@@ -614,83 +609,87 @@ app.controller("TaskDetailsCtrl", function(
         $scope.popupLoading = false;
         $rootScope.showLoading = false;
       });
-    }
+  };
 
-    $scope.openModal = function(modalId) {
-      $scope.paymentSubmitted = false;
-      $('#'+modalId).modal('open');
-    }
-
-    $scope.getTotalAmount = function(orderText)
-    {
-      var totalAmount = 0;
-      var order_text = '';
-      var amount = 0
-
-      if($scope.task.order.same_day_pickup == 1 && ($scope.appoptions && $scope.appoptions.same_day_pickup_price > 0))
-      {
-        amount = parseFloat($scope.appoptions.same_day_pickup_price);
-        totalAmount += amount;
-        order_text += 'Same Day Pickup: ' + amount; 
-      }
-
-      if($scope.task.order.pickup_price && $scope.task.order.pickup_price > 0)
-      {
-        amount = parseFloat($scope.task.order.pickup_price);
-        totalAmount += amount;
-
-        order_text += (order_text == ''?'': ', ') + 'Fixed time pickup: ' + amount;
-      }
-
-      if($scope.task.order.next_day_drop == 1 && ($scope.appoptions && $scope.appoptions.next_day_delivery_price > 0))
-      {
-        amount = parseFloat($scope.appoptions.next_day_delivery_price);
-        totalAmount += amount;
-
-        order_text += (order_text == ''?'': ', ') + 'Next day delivery: ' + amount;
-      }
-
-      if($scope.task.order.drop_price && $scope.task.order.drop_price > 0)
-      {
-        amount = parseFloat($scope.task.order.drop_price);
-        totalAmount += amount;
-
-        order_text += (order_text == ''?'': ', ') + 'Fixed time delivery: ' + amount;
-      }
-
-      order_text += order_text == ''?'': ' | ';
-
-      order_text += 'Items: ';
-      
-      angular.forEach($scope.order_items, function(value, key)
-      {
-        totalAmount += parseFloat(value.price);
-        order_text += (key == 0?"":", ") + value.quantity + "-" + value.title;
-      });
-
-      order_text += order_text == ''?'': ' | ';
-      
-      order_text += "Total: " + totalAmount;
-
-      if(orderText && orderText == true)
-        return order_text;
-      else
-        return totalAmount
-    }
-
+  $scope.openModal = function(modalId) {
     $scope.paymentSubmitted = false;
-    
-    $scope.makePayment = function() 
-    {
-      $scope.paymentSubmitted = true;
-      $scope.task.order.status = 2;
-      var total_amount = $scope.getTotalAmount();
-      var order_text = $scope.getTotalAmount(true);
+    $("#" + modalId).modal("open");
+  };
 
-      var formHtml = CommonService.GeneratePaymentForm($scope.task.order_id, $scope.vault_details.transact, total_amount, order_text);
-      $rootScope.loadPaymentForm(formHtml);
+  $scope.getTotalAmount = function(orderText) {
+    var totalAmount = 0;
+    var order_text = "";
+    var amount = 0;
+
+    if (
+      $scope.task.order.same_day_pickup == 1 &&
+      ($scope.appoptions && $scope.appoptions.same_day_pickup_price > 0)
+    ) {
+      amount = parseFloat($scope.appoptions.same_day_pickup_price);
+      totalAmount += amount;
+      order_text += "Same Day Pickup: " + amount;
     }
-    
+
+    if ($scope.task.order.pickup_price && $scope.task.order.pickup_price > 0) {
+      amount = parseFloat($scope.task.order.pickup_price);
+      totalAmount += amount;
+
+      order_text +=
+        (order_text == "" ? "" : ", ") + "Fixed time pickup: " + amount;
+    }
+
+    if (
+      $scope.task.order.next_day_drop == 1 &&
+      ($scope.appoptions && $scope.appoptions.next_day_delivery_price > 0)
+    ) {
+      amount = parseFloat($scope.appoptions.next_day_delivery_price);
+      totalAmount += amount;
+
+      order_text +=
+        (order_text == "" ? "" : ", ") + "Next day delivery: " + amount;
+    }
+
+    if ($scope.task.order.drop_price && $scope.task.order.drop_price > 0) {
+      amount = parseFloat($scope.task.order.drop_price);
+      totalAmount += amount;
+
+      order_text +=
+        (order_text == "" ? "" : ", ") + "Fixed time delivery: " + amount;
+    }
+
+    order_text += order_text == "" ? "" : " | ";
+
+    order_text += "Items: ";
+
+    angular.forEach($scope.order_items, function(value, key) {
+      totalAmount += parseFloat(value.price);
+      order_text += (key == 0 ? "" : ", ") + value.quantity + "-" + value.title;
+    });
+
+    order_text += order_text == "" ? "" : " | ";
+
+    order_text += "Total: " + totalAmount;
+
+    if (orderText && orderText == true) return order_text;
+    else return totalAmount;
+  };
+
+  $scope.paymentSubmitted = false;
+
+  $scope.makePayment = function() {
+    $scope.paymentSubmitted = true;
+    $scope.task.order.status = 2;
+    var total_amount = $scope.getTotalAmount();
+    var order_text = $scope.getTotalAmount(true);
+
+    var formHtml = CommonService.GeneratePaymentForm(
+      $scope.task.order_id,
+      $scope.vault_details.transact,
+      total_amount,
+      order_text
+    );
+    $rootScope.loadPaymentForm(formHtml);
+  };
 });
 
 app.controller("OrderdetailsCtrl", function(
@@ -842,7 +841,6 @@ app.controller("MyeditCtrl", function($scope, $routeParams) {
   };
 });
 
-
 app.controller("PaymentSuccessCtrl", function(
   $scope,
   $routeParams,
@@ -851,7 +849,6 @@ app.controller("PaymentSuccessCtrl", function(
   $httpParamSerializer,
   $location
 ) {
-
   $(document).ready(function() {
     $(".modal").modal();
   });
@@ -859,7 +856,6 @@ app.controller("PaymentSuccessCtrl", function(
   //  localstorage keys
   var id = $routeParams.id;
   var type = $routeParams.type;
-  
 });
 
 app.controller("PaymentErrorCtrl", function(
@@ -870,12 +866,10 @@ app.controller("PaymentErrorCtrl", function(
   $httpParamSerializer,
   $location
 ) {
-
   $(document).ready(function() {
     $(".modal").modal();
   });
   //  localstorage keys
   var id = $routeParams.id;
   var type = $routeParams.type;
-  
 });

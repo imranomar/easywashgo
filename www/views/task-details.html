@@ -19,9 +19,13 @@
                 </div>
             </div>
             <div class="col s3 page-title-row-col">
-                <div class='right-align'>
+                <div class='right-align' ng-if="task.type == Constant.TASK_TYPE.PICKUP_TASK">
                     <h4>-</h4>
                     <h5>-</h5>
+                </div>
+                <div class='right-align' ng-if="task.type == Constant.TASK_TYPE.DROP_TASK">
+                    <h4>{{task.order.pickup_close_id}}</h4>
+                    <h5>{{task.order.pickup_close_other_id}}</h5>
                 </div>
             </div>
         </div>

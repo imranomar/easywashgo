@@ -302,6 +302,9 @@ textarea.materialize-textarea {
   border-width: 2px;
 }
 
+.pull-left { float: left !important;}
+.pull-right { float: right !important;}
+
 .col2 {
   width: 20%;
 }
@@ -445,7 +448,7 @@ tr {
 }
 
 .module-item {
-  padding: 10px 5px 5px;
+  padding: 20px 5px 5px;
 }
 .module-item .task-type {
   vertical-align: text-bottom;
@@ -758,4 +761,38 @@ border-color: #d32f2f;
 }
 
 #CloseDropTaskModal .modal-header h5 span{ margin-top: 2px; display: inline-block;}
+
+.no-internet {
+  position: fixed;
+  width: 100%;
+  z-index: 1;
+  top: 18vw;
+}
+
+.no-internet .no-internet-text {
+  max-width: 220px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  text-align: center;
+  padding: 5px 14px;
+  margin: 0 auto;
+  border-radius: 30px;
+  font-size: 16px;
+}
+
+.task-count {
+  width: 28px;
+  background: #039be5;
+  height: 28px;
+  display: inline-block;
+  color: #fff;
+  border-radius: 100%;
+  font-size: 14px;
+  padding: 3px 2px;
+}
+
+.completed-task {
+  background: gold;
+  opacity: 0.7;
+}
 /* CREATE ORDER ENDS HERE */

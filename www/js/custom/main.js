@@ -1,5 +1,5 @@
-const baseUrl = 'http://eazywash.dk/advanced/backend/web/';
-//var baseUrl = 'http://thisisbig.ae/advanced/backend/web/';
+//const baseUrl = 'http://localhost/advanced/backend/web/';
+var baseUrl = 'http://eazywash.dk/advanced/backend/web/';
 
 
 window.addEventListener("beforeunload", function(e) {

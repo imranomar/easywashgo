@@ -1,7 +1,20 @@
-var app = angular.module("laundryApp", ["ngStorage", "ngRoute", "ngValidate"]);
+var app = angular.module("laundryApp", ["ngCordova", "ngStorage", "ngRoute", "ngValidate"]);
 
 app.run(function($rootScope, AppService) {
   AppService.initialize();
+
+  /* Check Internet Connection */
+  // $rootScope.online = navigator.onLine;
+  // $window.addEventListener("offline", function () {
+  //   $rootScope.$apply(function() {
+  //     $rootScope.online = false;
+  //   });
+  // }, false);
+  // $window.addEventListener("online", function () {
+  //   $rootScope.$apply(function() {
+  //     $rootScope.online = true;
+  //   });
+  // }, false);
 
   /* Constants */
   $rootScope.Constant = {
@@ -52,18 +65,70 @@ app.run(function($rootScope, AppService) {
   });
 });
 
-app.factory("AppService", function($rootScope /*, FCMService*/) {
+app.factory("AppService", function($rootScope, $cordovaNetwork, FCMService) {
   return {
     initialize: function() {
       document.addEventListener(
         "deviceready",
         function() {
+          $rootScope.isOnline = true;
+
+          $rootScope.network = $cordovaNetwork.getNetwork();
+          $rootScope.isOnline = $cordovaNetwork.isOnline();
+          
+          // listen for Online event
+          $rootScope.$on('$cordovaNetwork:online', function(event, networkState){
+              $rootScope.isOnline = true;
+              $rootScope.network = $cordovaNetwork.getNetwork();
+          })
+  
+          // listen for Offline event
+          $rootScope.$on('$cordovaNetwork:offline', function(event, networkState){
+              console.log("got offline");
+              $rootScope.isOnline = false;
+              $rootScope.network = $cordovaNetwork.getNetwork();
+          })
+
           FCMService.generateToken();
         },
         false
       );
     }
   };
+});
+
+app.factory('FCMService', function ($rootScope, appInfo, $httpParamSerializer,$http) {
+  return {
+    generateToken: function() {
+      if(!device.cordova) {
+         return;
+      }
+      
+      FCMPlugin.getToken(function(token) {
+        
+        $rootScope.fcm_token = token;
+        // let x = localStorage.getItem('laundryUser');
+        // let data = {
+        //   token: token,     
+        // };
+        // let req = {
+        //     method: 'PUT',
+        //     url: appInfo.url+'customersapi/update/?id='+x,
+        //     data: $httpParamSerializer(data),
+        //     headers: {
+        //         'Content-Type': 'application/x-www-form-urlencoded'
+        //     }
+        // }
+        // $http(req)
+        //   .then(function(res){
+        //     console.log(res);
+        //   }).catch(function(error){
+        //       console.log(error);      
+        // })
+      });
+    }
+  }
+  
 });
 
 app.factory("CommonService", function(
