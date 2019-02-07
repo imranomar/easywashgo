@@ -107,24 +107,10 @@ app.factory('FCMService', function ($rootScope, appInfo, $httpParamSerializer,$h
       FCMPlugin.getToken(function(token) {
         
         $rootScope.fcm_token = token;
-        // let x = localStorage.getItem('laundryUser');
-        // let data = {
-        //   token: token,     
-        // };
-        // let req = {
-        //     method: 'PUT',
-        //     url: appInfo.url+'customersapi/update/?id='+x,
-        //     data: $httpParamSerializer(data),
-        //     headers: {
-        //         'Content-Type': 'application/x-www-form-urlencoded'
-        //     }
-        // }
-        // $http(req)
-        //   .then(function(res){
-        //     console.log(res);
-        //   }).catch(function(error){
-        //       console.log(error);      
-        // })
+
+        FCMPlugin.onNotification(function(data) {
+          //alert(data);
+        });
       });
     }
   }

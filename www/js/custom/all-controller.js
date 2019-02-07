@@ -68,7 +68,7 @@ app.controller("LoginCtrl", function(
     $rootScope.showLoading = true;
 
     var apiUrl =
-      "customersapi/authenticate?email=" + email + "&password=" + password;
+      "operatorsapi/authenticate?email=" + email + "&password=" + password;
 
     CommonService.CallAjaxUsingPostRequest(apiUrl, {
       device_id: $rootScope.fcm_token
