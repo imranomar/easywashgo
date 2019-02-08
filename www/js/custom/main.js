@@ -1,5 +1,5 @@
-const baseUrl = 'http://192.168.1.12/advanced/backend/web/';
-//var baseUrl = 'http://eazywash.dk/advanced/backend/web/';
+//const baseUrl = 'http://192.168.1.12/advanced/backend/web/';
+const baseUrl = 'http://eazywash.dk/advanced/backend/web/';
 
 
 window.addEventListener("beforeunload", function(e) {

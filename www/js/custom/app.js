@@ -1,6 +1,6 @@
 var app = angular.module("laundryApp", ["ngCordova", "ngStorage", "ngRoute", "ngValidate"]);
 
-app.run(function($rootScope, AppService) {
+app.run(function($rootScope, $location, AppService, CommonService) {
   AppService.initialize();
 
   /* Check Internet Connection */
@@ -42,25 +42,51 @@ app.run(function($rootScope, AppService) {
 
   $rootScope.$on("$routeChangeStart", function(event, currRoute, prevRoute) {
     var currentRouteDetails = currRoute.$$route;
-    var showBackBtn =
-      currentRouteDetails && currentRouteDetails.showBackBtn == true
-        ? true
-        : false;
-    var hideNavBar =
-      currentRouteDetails && currentRouteDetails.hideNavBar == true
-        ? true
-        : false;
 
-    if (showBackBtn && showBackBtn == true) {
-      $rootScope.showBackBtn = true;
-    } else {
-      $rootScope.showBackBtn = false;
+    let cookieName = "laundryCookie";
+    function getCookie(name) {
+      var value = "; " + document.cookie;
+      var parts = value.split("; " + name + "=");
+      if (parts.length == 2)
+        return parts
+          .pop()
+          .split(";")
+          .shift();
     }
 
-    if (hideNavBar && hideNavBar == true) {
-      $rootScope.hideNavBar = true;
+    var authenticationRequired =
+      currentRouteDetails && currentRouteDetails.authentication == true
+        ? true
+        : false;
+debugger;
+    var isAuthenticated = CommonService.isAuthenticated();
+    if(authenticationRequired && !isAuthenticated) {
+      $location.path("/login");
+    } else if(!authenticationRequired && isAuthenticated) {
+      $location.path("/dashboard");
     } else {
-      $rootScope.hideNavBar = false;
+
+      var showBackBtn =
+        currentRouteDetails && currentRouteDetails.showBackBtn == true
+          ? true
+          : false;
+      var hideNavBar =
+        currentRouteDetails && currentRouteDetails.hideNavBar == true
+          ? true
+          : false;
+          
+
+      if (showBackBtn && showBackBtn == true) {
+        $rootScope.showBackBtn = true;
+      } else {
+        $rootScope.showBackBtn = false;
+      }
+
+      if (hideNavBar && hideNavBar == true) {
+        $rootScope.hideNavBar = true;
+      } else {
+        $rootScope.hideNavBar = false;
+      }
     }
   });
 });
@@ -124,29 +150,38 @@ app.factory("CommonService", function(
   appInfo
 ) {
   var LOCALSTORAGE_USER = "laundryUser";
-  var LOCALSTORAGE_REMEMBER_ME = "rememberMe";
+  //var LOCALSTORAGE_REMEMBER_ME = "rememberMe";
   var LOCALSTORAGE_DATE_FILTERED = "task_filtered";
 
   return {
+    isAuthenticated: function() {
+      var user = localStorage.getItem(LOCALSTORAGE_USER);
+
+      if(user) {
+        return true;
+      }
+      return false;
+    },
     storeUserDetailsLocal: function(data, isChecked) {
       localStorage.setItem(LOCALSTORAGE_USER, data);
 
-      var date = new Date();
-      var date1 = "";
+      // var date = new Date();
+      // var date1 = "";
 
-      if (isChecked == true) {
-        localStorage.setItem(LOCALSTORAGE_REMEMBER_ME, "y");
-        date1 = new Date(date.setDate(date.getDate() + 10)).toUTCString();
-      } else {
-        localStorage.removeItem(LOCALSTORAGE_REMEMBER_ME);
-        date1 = new Date(date.setHours(date.getHours() + 1)).toUTCString();
-      }
-      document.cookie = "laundryCookie=y; path= /; expires=" + date1;
+      // if (isChecked == true) {
+      //   localStorage.setItem(LOCALSTORAGE_REMEMBER_ME, "y");
+      //   date1 = new Date(date.setDate(date.getDate() + 10)).toUTCString();
+      // } else {
+      //   localStorage.removeItem(LOCALSTORAGE_REMEMBER_ME);
+      //   date1 = new Date(date.setHours(date.getHours() + 1)).toUTCString();
+      // }
+      // localStorage.setItem(LOCALSTORAGE_AUTH_USER, '1');
+      // document.cookie = "laundryCookie=y; path= /; expires=" + date1;
     },
     removeUserDetailsLocal: function() {
-      document.cookie = "laundryCookie=y; path= /; expires=expires=Thu, 01 Jan 1970 00:00:01 GMT;";
+      //document.cookie = "laundryCookie=y; path= /; expires=expires=Thu, 01 Jan 1970 00:00:01 GMT;";
       localStorage.removeItem(LOCALSTORAGE_USER);
-      localStorage.removeItem(LOCALSTORAGE_REMEMBER_ME);
+      //localStorage.removeItem(LOCALSTORAGE_REMEMBER_ME);
     },
     storeTaskFilterDateLocal: function(date) {
       localStorage.setItem(LOCALSTORAGE_DATE_FILTERED, date);
@@ -231,140 +266,29 @@ app.factory("CommonService", function(
 });
 
 app.config(function($routeProvider, $locationProvider) {
-  let cookieName = "laundryCookie";
-  function getCookie(name) {
-    var value = "; " + document.cookie;
-    var parts = value.split("; " + name + "=");
-    if (parts.length == 2)
-      return parts
-        .pop()
-        .split(";")
-        .shift();
-  }
-
   $routeProvider
     .when("/login", {
       templateUrl: "views/login.html",
-      resolve: {
-        check: function($location) {
-          if (getCookie(cookieName) == "y") {
-            $location.path("/dashboard");
-          }
-        }
-      },
+      authentication: false,
       hideNavBar: true
     })
     .when("/forget", {
       templateUrl: "views/forget.html",
-      resolve: {
-        check: function($location) {
-          if (getCookie(cookieName) == "y") {
-            $location.path("/dashboard");
-          }
-        }
-      },
+      authentication: false,
       hideNavBar: true
     })
     .when("/dashboard", {
       templateUrl: "views/dashboard.html",
-      resolve: {
-        check: function($location) {
-          if (!getCookie(cookieName)) {
-            $location.path("/login");
-          }
-        }
-      }
-    })
-    .when("/pricing", {
-      templateUrl: "views/pricing.html",
-      resolve: {
-        check: function($location) {
-          if (!getCookie(cookieName)) {
-            $location.path("/login");
-          }
-        }
-      }
-    })
-    .when("/aboutus", {
-      templateUrl: "views/aboutus.html",
-      resolve: {
-        check: function($location) {
-          if (!getCookie(cookieName)) {
-            $location.path("/login");
-          }
-        }
-      }
-    })
-    .when("/faqs", {
-      templateUrl: "views/faqs.html",
-      resolve: {
-        check: function($location) {
-          if (!getCookie(cookieName)) {
-            $location.path("/login");
-          }
-        }
-      }
-    })
-    .when("/notification", {
-      templateUrl: "views/notifications.html",
-      resolve: {
-        check: function($location) {
-          if (!getCookie(cookieName)) {
-            $location.path("/login");
-          }
-        }
-      }
-    })
-    .when("/deliverydate", {
-      templateUrl: "views/deliverydate.html",
-      resolve: {
-        check: function($location) {
-          if (!getCookie(cookieName)) {
-            $location.path("/login");
-          }
-        }
-      }
+      authentication: true
     })
     .when("/task-details/:id", {
       templateUrl: "views/task-details.html",
-      resolve: {
-        check: function($location) {
-          if (!getCookie(cookieName)) {
-            $location.path("/login");
-          }
-        }
-      },
+      authentication: true,
       showBackBtn: true
     })
     .when("/order-details/:id", {
       templateUrl: "views/order-details.html",
-      resolve: {
-        check: function($location) {
-          if (!getCookie(cookieName)) {
-            $location.path("/login");
-          }
-        }
-      }
-    })
-    .when("/payment-success/:type/:id", {
-      templateUrl: "views/payment-success.html",
-      resolve: {
-        check: function($location) {
-          if (!getCookie(cookieName)) {
-            $location.path("/login");
-          }
-        }
-      }
-    })
-    .when("/payment-error/:type/:id", {
-      templateUrl: "views/payment-error.html",
-      resolve: {
-        check: function($location) {
-          if (!getCookie(cookieName)) {
-            $location.path("/login");
-          }
-        }
-      }
+      authentication: true
     })
     .otherwise({
       redirectTo: "/login"
