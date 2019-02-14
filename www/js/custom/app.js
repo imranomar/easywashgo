@@ -43,22 +43,11 @@ app.run(function($rootScope, $location, AppService, CommonService) {
   $rootScope.$on("$routeChangeStart", function(event, currRoute, prevRoute) {
     var currentRouteDetails = currRoute.$$route;
 
-    let cookieName = "laundryCookie";
-    function getCookie(name) {
-      var value = "; " + document.cookie;
-      var parts = value.split("; " + name + "=");
-      if (parts.length == 2)
-        return parts
-          .pop()
-          .split(";")
-          .shift();
-    }
-
     var authenticationRequired =
       currentRouteDetails && currentRouteDetails.authentication == true
         ? true
         : false;
-debugger;
+
     var isAuthenticated = CommonService.isAuthenticated();
     if(authenticationRequired && !isAuthenticated) {
       $location.path("/login");
