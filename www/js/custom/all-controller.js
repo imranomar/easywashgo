@@ -232,6 +232,7 @@ app.controller("DashboardCtrl", function(
   };
 
   $scope.showPreviousDayTask = function() {
+    $scope.filterIndex = -1;
     var decreament = $filter("date")($scope.date, "EEEE") == "Monday" ? 2 : 1;
     $scope.date.setDate($scope.date.getDate() - decreament);
 
@@ -241,12 +242,14 @@ app.controller("DashboardCtrl", function(
   };
 
   $scope.goToTaday = function() {
+    $scope.filterIndex = -1;
     $scope.date = new Date();
     CommonService.removeTaskFilterDateLocal();
     $scope.FilterTaskByDateList();
   };
 
   $scope.showNextDayTask = function() {
+    $scope.filterIndex = -1;
     var increament = $filter("date")($scope.date, "EEEE") == "Saturday" ? 2 : 1;
     $scope.date.setDate($scope.date.getDate() + increament);
 
