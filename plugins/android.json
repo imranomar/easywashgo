@@ -7,16 +7,16 @@
     "files": {}
   },
   "installed_plugins": {
-    "cordova-plugin-whitelist": {
-      "PACKAGE_NAME": "io.cordova.hellocordova"
-    },
     "cordova-plugin-device": {
-      "PACKAGE_NAME": "io.cordova.hellocordova"
+      "PACKAGE_NAME": "io.cordova.eazywashapp"
     },
     "cordova-plugin-fcm": {
       "PACKAGE_NAME": "io.cordova.eazywashapp"
     },
     "cordova-plugin-network-information": {
+      "PACKAGE_NAME": "io.cordova.eazywashapp"
+    },
+    "cordova-plugin-whitelist": {
       "PACKAGE_NAME": "io.cordova.eazywashapp"
     }
   },
