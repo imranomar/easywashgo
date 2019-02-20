@@ -278,7 +278,7 @@ app.controller("DashboardCtrl", function(
     return cityText;
   };
 
-  var promise = $interval(loadTasks, 10000);
+  var promise = $interval(loadTasks, 3000);
   $scope.$on('$destroy',function(){
       if(promise)
           $interval.cancel(promise);   
